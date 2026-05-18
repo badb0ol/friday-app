@@ -255,6 +255,102 @@ function Panel({children, title, eyebrow, onClose}) {
 
 
 // â”€â”€â”€ CYCLING PANEL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── OVERVIEW PANEL (morning briefing) ───────────────────────────────────
+function OverviewPanel({rides, goals, transactions, bodyMetrics}) {
+  const {ctl, atl, tsb, status} = computeLoad(rides)
+  const wk = weeklyKm(rides)
+  const prevWk = prevWeekKm(rides)
+  const streak = getStreak(rides)
+  const as = avgSpd(rides)
+  const bal = transactions.reduce((s,t)=>t.type==='income'?s+t.amount:s-t.amount,0)
+  const latestW = bodyMetrics.filter(m=>m.type==='weight').sort((a,b)=>b.date.localeCompare(a.date))[0]
+
+  const formSentence = tsb > 15
+    ? `Form is excellent — peak shape, sir. Hard efforts will pay off this week.`
+    : tsb > 5
+    ? `Form is good, sir. The legs are fresh and ready for quality work.`
+    : tsb > -5
+    ? `Form is balanced, sir — neither tired nor fully sharp. A steady session is ideal.`
+    : tsb > -20
+    ? `Fatigue is building, sir. Keep efforts controlled and prioritise recovery tonight.`
+    : `The body needs rest, sir. Easy riding or a full day off is the right call.`
+
+  const Rule = () => <div style={{height:1,background:C.border,margin:'22px 0'}}/>
+  const Ey = ({children}) => <div style={{fontFamily:MONO,fontSize:10,color:C.success,letterSpacing:'0.2em',textTransform:'uppercase',marginBottom:14}}>{children}</div>
+
+  return (
+    <div className="fade-in">
+      <Ey>Dispatch</Ey>
+      <p style={{fontFamily:SERIF,fontSize:18,color:C.text,lineHeight:1.55,fontWeight:400,marginBottom:0}}>
+        {formSentence}{' '}
+        {wk > 0
+          ? `${wk.toFixed(0)} km on the bike this week${prevWk > 0 ? `, ${wk > prevWk ? '+' : ''}${(wk - prevWk).toFixed(0)} km vs last week` : ''}.`
+          : 'No rides logged yet this week.'}
+      </p>
+
+      <Rule/>
+      <Ey>This week</Ey>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'20px 16px',marginBottom:4}}>
+        {[
+          {label:'Distance',    value: wk > 0 ? wk.toFixed(0) : '—', unit:'km'},
+          {label:'Rides',       value: rides.filter(r=>r.date>=new Date(Date.now()-7*86400000).toISOString().split('T')[0]).length, unit:'sessions'},
+          {label:'Avg speed',   value: as > 0 ? as : '—', unit:'km/h'},
+          {label:'Streak',      value: streak, unit: streak === 1 ? 'day' : 'days'},
+        ].map(({label,value,unit})=>(
+          <div key={label}>
+            <div style={{fontFamily:MONO,fontSize:9,color:C.dim,letterSpacing:'0.18em',textTransform:'uppercase',marginBottom:6}}>{label}</div>
+            <div style={{display:'flex',alignItems:'baseline',gap:6}}>
+              <span style={{fontFamily:SERIF,fontSize:36,color:C.text,lineHeight:1,letterSpacing:'-0.02em'}}>{value}</span>
+              <span style={{fontFamily:MONO,fontSize:11,color:C.muted}}>{unit}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <Rule/>
+      <Ey>Where things stand</Ey>
+      {goals.length === 0
+        ? <p style={{fontFamily:SERIF,fontSize:15,color:C.muted,fontStyle:'italic'}}>No goals set yet. Ask Friday to create one.</p>
+        : <div style={{display:'flex',flexDirection:'column',gap:18}}>
+            {goals.map(g=>{
+              const p = g.inverted
+                ? Math.max(0,Math.min(100,(1-(g.current-g.target)/g.target)*100))
+                : Math.min(100,(g.current/g.target)*100)
+              const done = p >= 100
+              return (
+                <div key={g.id}>
+                  <div style={{display:'flex',justifyContent:'space-between',alignItems:'baseline',marginBottom:8}}>
+                    <span style={{fontFamily:SERIF,fontSize:16,color:done?C.success:C.text}}>{g.title}</span>
+                    <span style={{fontFamily:MONO,fontSize:11,color:C.muted}}>{g.current} / {g.target} {g.unit}</span>
+                  </div>
+                  <div style={{height:2,background:C.border,position:'relative',borderRadius:1}}>
+                    <div style={{position:'absolute',left:0,top:0,bottom:0,width:`${p}%`,background:done?C.success:C.primary,borderRadius:1}}/>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+      }
+
+      <Rule/>
+      <Ey>Finances</Ey>
+      <div style={{display:'flex',gap:28}}>
+        {[
+          {label:'Balance', value: (Math.abs(bal)/1000).toFixed(1), unit:'k€', color: bal >= 0 ? C.success : C.danger, prefix: bal >= 0 ? '+' : '-'},
+          ...(latestW ? [{label:'Weight', value: latestW.value, unit:'kg', color: C.text, prefix:''}] : []),
+        ].map(({label,value,unit,color,prefix})=>(
+          <div key={label}>
+            <div style={{fontFamily:MONO,fontSize:9,color:C.dim,letterSpacing:'0.18em',textTransform:'uppercase',marginBottom:8}}>{label}</div>
+            <div style={{fontFamily:SERIF,fontSize:32,color,lineHeight:1,letterSpacing:'-0.02em'}}>
+              {prefix}{value}<span style={{fontFamily:MONO,fontSize:11,color:C.muted,marginLeft:4}}>{unit}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 function CyclingPanel({rides, setRides}) {
   const [adding,setAdding]=useState(false)
   const [form,setForm]=useState({date:today(),km:'',avgSpeed:'',duration:'',notes:''})
@@ -1582,6 +1678,7 @@ STYLE: ${toneGuide} Under 80 words unless detail requested. No "Certainly!" ever
     </>
   )
 }
+
 
 
 
