@@ -1,4 +1,4 @@
-// ─── FRIDAY v4 · Iron Man Interface ──────────────────────────────────────────
+﻿// â”€â”€â”€ FRIDAY v4 Â· Iron Man Interface â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 import Head from 'next/head'
 import { useState, useEffect, useRef, useCallback } from 'react'
 
@@ -12,17 +12,17 @@ const C = {
 const catColor = c => ({ cycling:C.primary, health:C.success, productivity:C.gold, finance:C.secondary, learning:C.purple, custom:C.muted }[c] || C.muted)
 
 const NAV = [
-  { id:'orb',       icon:'◎', tip:'Home'       },
-  { id:'cycling',   icon:'◈', tip:'Cycling'    },
-  { id:'training',  icon:'⬡', tip:'Training'   },
-  { id:'body',      icon:'🫀', tip:'Body'       },
-  { id:'goals',     icon:'⊕', tip:'Goals'      },
-  { id:'projects',  icon:'◧', tip:'Projects'   },
-  { id:'finance',   icon:'◈', tip:'Finance'    },
-  { id:'calendar',  icon:'◷', tip:'Calendar'   },
-  { id:'learning',  icon:'◉', tip:'Learning'   },
-  { id:'memory',    icon:'◐', tip:'Memory'     },
-  { id:'strava',    icon:'◬', tip:'Strava'     },
+  { id:'orb',       icon:'â—Ž', tip:'Home'       },
+  { id:'cycling',   icon:'â—ˆ', tip:'Cycling'    },
+  { id:'training',  icon:'â¬¡', tip:'Training'   },
+  { id:'body',      icon:'ðŸ«€', tip:'Body'       },
+  { id:'goals',     icon:'âŠ•', tip:'Goals'      },
+  { id:'projects',  icon:'â—§', tip:'Projects'   },
+  { id:'finance',   icon:'â—ˆ', tip:'Finance'    },
+  { id:'calendar',  icon:'â—·', tip:'Calendar'   },
+  { id:'learning',  icon:'â—‰', tip:'Learning'   },
+  { id:'memory',    icon:'â—', tip:'Memory'     },
+  { id:'strava',    icon:'â—¬', tip:'Strava'     },
 ]
 
 const tod = () => { const h = new Date().getHours(); return h < 12 ? 'morning' : h < 17 ? 'afternoon' : 'evening' }
@@ -79,7 +79,7 @@ const parseGPX = text => {
 const loadMem = () => { try{return JSON.parse(localStorage.getItem('fri_memory')||'{}')}catch{return{}} }
 const saveMem = u => { const m={...loadMem(),...u,ts:Date.now()}; localStorage.setItem('fri_memory',JSON.stringify(m)); return m }
 
-// ─── TOOLS ────────────────────────────────────────────────────────────────────
+// â”€â”€â”€ TOOLS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const TOOLS = [
   {name:'log_ride',description:'Log a cycling ride. Call immediately when sir mentions completing one.',input_schema:{type:'object',required:['km'],properties:{date:{type:'string'},km:{type:'number'},avg_speed:{type:'number'},duration:{type:'string'},notes:{type:'string'}}}},
   {name:'manage_goal',description:'Create, update or auto-progress goals.',input_schema:{type:'object',required:['action'],properties:{action:{type:'string',enum:['create','update_current','update_target','delete']},goal_id:{type:'number'},title:{type:'string'},category:{type:'string',enum:['cycling','health','productivity','finance','learning','custom']},current:{type:'number'},target:{type:'number'},unit:{type:'string'},icon:{type:'string'},inverted:{type:'boolean'}}}},
@@ -93,18 +93,18 @@ const TOOLS = [
 ]
 
 const toolLabel = (n,i) => ({
-  log_ride:`📝 ${i.km}km logged${i.avg_speed?` @ ${i.avg_speed}kph`:''}`,
-  manage_goal:i.action==='create'?`🎯 Goal: ${i.title}`:`✏️ Goal updated`,
-  manage_project:`🚀 ${i.name}`,
-  log_transaction:`💶 ${i.type==='income'?'+':'-'}€${i.amount} · ${i.description}`,
-  update_learning:`📚 ${i.topic}`,
-  log_body_metric:`${i.type==='weight'?'⚖️':i.type==='sleep'?'😴':'💓'} ${i.type}: ${i.value}`,
-  create_training_plan:`📅 Training plan created`,
-  remember:`🧠 "${i.fact}"`,
-  get_analytics:`📊 Analysing ${i.metric}...`,
-}[n]||`🔧 ${n}`)
+  log_ride:`ðŸ“ ${i.km}km logged${i.avg_speed?` @ ${i.avg_speed}kph`:''}`,
+  manage_goal:i.action==='create'?`ðŸŽ¯ Goal: ${i.title}`:`âœï¸ Goal updated`,
+  manage_project:`ðŸš€ ${i.name}`,
+  log_transaction:`ðŸ’¶ ${i.type==='income'?'+':'-'}â‚¬${i.amount} Â· ${i.description}`,
+  update_learning:`ðŸ“š ${i.topic}`,
+  log_body_metric:`${i.type==='weight'?'âš–ï¸':i.type==='sleep'?'ðŸ˜´':'ðŸ’“'} ${i.type}: ${i.value}`,
+  create_training_plan:`ðŸ“… Training plan created`,
+  remember:`ðŸ§  "${i.fact}"`,
+  get_analytics:`ðŸ“Š Analysing ${i.metric}...`,
+}[n]||`ðŸ”§ ${n}`)
 
-// ─── MINIMAL UI ATOMS ─────────────────────────────────────────────────────────
+// â”€â”€â”€ MINIMAL UI ATOMS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const Hdg = ({children,color=C.primary,mb=14}) => (
   <div style={{fontFamily:'Orbitron,monospace',fontSize:9,letterSpacing:3,color,textTransform:'uppercase',marginBottom:mb,opacity:0.8}}>{children}</div>
 )
@@ -136,7 +136,7 @@ const Btn = ({children,onClick,color=C.primary,outline=false,small=false,style={
 const Row = ({children,mb=10}) => <div style={{marginBottom:mb}}>{children}</div>
 const Label = ({children}) => <div style={{fontSize:10,color:C.muted,marginBottom:4,letterSpacing:1}}>{children.toUpperCase()}</div>
 
-// ─── GPX MAP ──────────────────────────────────────────────────────────────────
+// â”€â”€â”€ GPX MAP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function GPXMap({points}) {
   const ref=useRef(null); const inst=useRef(null)
   useEffect(()=>{
@@ -145,7 +145,7 @@ function GPXMap({points}) {
       if(inst.current){inst.current.remove();inst.current=null}
       const L=window.L
       const map=L.map(ref.current,{zoomControl:false})
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{attribution:'© OSM'}).addTo(map)
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{attribution:'Â© OSM'}).addTo(map)
       const lls=points.map(p=>[p.lat,p.lon])
       const poly=L.polyline(lls,{color:C.primary,weight:3,opacity:0.9}).addTo(map)
       map.fitBounds(poly.getBounds(),{padding:[20,20]})
@@ -160,7 +160,7 @@ function GPXMap({points}) {
   return <div ref={ref} style={{height:220,borderRadius:8,overflow:'hidden',border:`1px solid ${C.border}`}}/>
 }
 
-// ─── FRIDAY ORB ───────────────────────────────────────────────────────────────
+// â”€â”€â”€ FRIDAY ORB â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function FridayOrb({isSpeaking, isLoading, isListening, orbSize=320, waveH}) {
   const state = isListening ? 'listen' : isLoading ? 'think' : isSpeaking ? 'speak' : 'idle'
   const anim = state==='speak' ? 'orb-speak 0.35s ease-in-out infinite' : state==='think' ? 'orb-think 0.8s ease-in-out infinite' : state==='listen' ? 'orb-think 0.5s ease-in-out infinite' : 'orb-idle 3s ease-in-out infinite'
@@ -192,7 +192,7 @@ function FridayOrb({isSpeaking, isLoading, isListening, orbSize=320, waveH}) {
         </linearGradient>
       </defs>
 
-      {/* Outermost decorative ring — slow CW */}
+      {/* Outermost decorative ring â€” slow CW */}
       <g style={{transformOrigin:`${cx}px ${cy}px`, animation:'ring-cw 45s linear infinite'}}>
         <circle cx={cx} cy={cy} r={R[0]} fill="none" stroke={C.primary} strokeWidth="0.4" strokeDasharray="3 11" opacity="0.22"/>
         {ticks.map((t,i)=>(
@@ -202,13 +202,13 @@ function FridayOrb({isSpeaking, isLoading, isListening, orbSize=320, waveH}) {
         ))}
       </g>
 
-      {/* Second ring — medium CCW */}
+      {/* Second ring â€” medium CCW */}
       <g style={{transformOrigin:`${cx}px ${cy}px`, animation:'ring-ccw 22s linear infinite'}}>
         <circle cx={cx} cy={cy} r={R[1]} fill="none" stroke={C.primary} strokeWidth="0.7" strokeDasharray="18 22" opacity="0.18"/>
         <circle cx={cx} cy={cy} r={R[1]+6} fill="none" stroke={C.primary} strokeWidth="0.3" strokeDasharray="4 28" opacity="0.12"/>
       </g>
 
-      {/* Scanning arc — fast CW */}
+      {/* Scanning arc â€” fast CW */}
       <g style={{transformOrigin:`${cx}px ${cy}px`, animation:`ring-cw ${isLoading?'2s':'5s'} linear infinite`}}>
         <line x1={cx} y1={cy} x2={cx} y2={cy-R[2]} stroke={C.primary} strokeWidth="0.8" opacity="0.45"/>
         <path d={`M ${cx} ${cy-R[2]} A ${R[2]} ${R[2]} 0 0 1 ${cx+R[2]*Math.sin(Math.PI*0.55)} ${cy-R[2]*Math.cos(Math.PI*0.55)}`}
@@ -257,39 +257,39 @@ function FridayOrb({isSpeaking, isLoading, isListening, orbSize=320, waveH}) {
   )
 }
 
-// ─── DATA BADGE (floats around orb) ──────────────────────────────────────────
+// â”€â”€â”€ DATA BADGE (floats around orb) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function DataBadge({label, value, unit, color=C.primary, angle, distance, delay=0}) {
   const x = Math.sin(angle*Math.PI/180)*distance
   const y = -Math.cos(angle*Math.PI/180)*distance
   return (
     <div style={{position:'absolute',left:'50%',top:'50%',
       transform:`translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`,
-      textAlign:'center', pointerEvents:'none',
-      animation:`badge-float 4s ease-in-out infinite`,
-      animationDelay:`${delay}s`, zIndex:10}}>
-      <div style={{fontSize:8,color:C.muted,fontFamily:'Orbitron,monospace',letterSpacing:2,marginBottom:2}}>{label}</div>
-      <div style={{fontFamily:'Orbitron,monospace',fontSize:16,color,lineHeight:1,textShadow:`0 0 12px ${color}88`}}>{value}</div>
-      {unit&&<div style={{fontSize:8,color:C.muted,marginTop:1}}>{unit}</div>}
-      <div style={{width:32,height:1,background:`linear-gradient(90deg,transparent,${color},transparent)`,margin:'4px auto 0'}}/>
+      textAlign:'center', pointerEvents:'none', zIndex:10}}>
+      <div style={{animation:`badge-float 4s ease-in-out infinite`,animationDelay:`${delay}s`}}>
+        <div style={{fontSize:8,color:C.muted,fontFamily:'Orbitron,monospace',letterSpacing:2,marginBottom:2}}>{label}</div>
+        <div style={{fontFamily:'Orbitron,monospace',fontSize:16,color,lineHeight:1,textShadow:`0 0 12px ${color}88`}}>{value}</div>
+        {unit&&<div style={{fontSize:8,color:C.muted,marginTop:1}}>{unit}</div>}
+        <div style={{width:32,height:1,background:`linear-gradient(90deg,transparent,${color},transparent)`,margin:'4px auto 0'}}/>
+      </div>
     </div>
   )
 }
 
-// ─── PANEL WRAPPER ────────────────────────────────────────────────────────────
+// â”€â”€â”€ PANEL WRAPPER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function Panel({children, title, onClose}) {
   return (
     <div className="panel-in" style={{width:400,minWidth:400,height:'100%',background:'rgba(4,16,30,0.97)',borderLeft:`1px solid ${C.border}`,display:'flex',flexDirection:'column',overflow:'hidden'}}>
       <div style={{padding:'14px 18px',borderBottom:`1px solid ${C.border}`,display:'flex',justifyContent:'space-between',alignItems:'center',flexShrink:0}}>
         <div style={{fontFamily:'Orbitron,monospace',fontSize:10,color:C.primary,letterSpacing:3}}>{title}</div>
         <button onClick={onClose} style={{background:'none',border:'none',color:C.muted,cursor:'pointer',fontSize:16,lineHeight:1}}
-          onMouseEnter={e=>e.target.style.color=C.text} onMouseLeave={e=>e.target.style.color=C.muted}>✕</button>
+          onMouseEnter={e=>e.target.style.color=C.text} onMouseLeave={e=>e.target.style.color=C.muted}>âœ•</button>
       </div>
       <div style={{flex:1,overflowY:'auto',padding:'16px 18px'}}>{children}</div>
     </div>
   )
 }
 
-// ─── CYCLING PANEL ────────────────────────────────────────────────────────────
+// â”€â”€â”€ CYCLING PANEL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function CyclingPanel({rides, setRides}) {
   const [adding,setAdding]=useState(false)
   const [form,setForm]=useState({date:today(),km:'',avgSpeed:'',duration:'',notes:''})
@@ -299,17 +299,17 @@ function CyclingPanel({rides, setRides}) {
   const wk=weeklyKm(rides),pk=prevWeekKm(rides)
   const streak=getStreak(rides)
   const best=rides.length?Math.max(...rides.map(r=>Number(r.km))):0
-  const trendStr=pk>0?`${wk>pk?'↑':'↓'}${Math.abs(wk-pk)} km`:'First week'
+  const trendStr=pk>0?`${wk>pk?'â†‘':'â†“'}${Math.abs(wk-pk)} km`:'First week'
   const last8=rides.slice(0,8).reverse()
 
   const addRide=()=>{if(!form.km)return;setRides(p=>[{id:Date.now(),...form,km:Number(form.km),avgSpeed:Number(form.avgSpeed||22)},...p]);setForm({date:today(),km:'',avgSpeed:'',duration:'',notes:''});setAdding(false)}
   const handleGPX=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{const d=parseGPX(ev.target.result);setGpxData(d?{...d,name:f.name}:null)};r.readAsText(f)}
-  const logGPX=()=>{if(!gpxData)return;const h=Math.floor(gpxData.durationMin/60),m=gpxData.durationMin%60;setRides(p=>[{id:Date.now(),date:today(),km:gpxData.distance,avgSpeed:gpxData.avgSpeed||22,duration:`${h>0?h+'h':''}${m}m`,notes:`GPX · +${gpxData.elevGain}m`},...p]);setGpxData(null)}
+  const logGPX=()=>{if(!gpxData)return;const h=Math.floor(gpxData.durationMin/60),m=gpxData.durationMin%60;setRides(p=>[{id:Date.now(),date:today(),km:gpxData.distance,avgSpeed:gpxData.avgSpeed||22,duration:`${h>0?h+'h':''}${m}m`,notes:`GPX Â· +${gpxData.elevGain}m`},...p]);setGpxData(null)}
 
   return (
     <div className="fade-in">
       <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10,marginBottom:16}}>
-        {[{l:'This Week',v:wk,u:'km',sub:trendStr,c:C.primary},{l:'Streak',v:streak,u:'days',sub:streak>=3?'🔥':'Ride today',c:streak>=3?C.success:C.gold},{l:'Best Ride',v:best,u:'km',c:C.secondary},{l:'Avg Speed',v:avgSpd(rides),u:'kph',c:C.gold}].map((s,i)=>(
+        {[{l:'This Week',v:wk,u:'km',sub:trendStr,c:C.primary},{l:'Streak',v:streak,u:'days',sub:streak>=3?'ðŸ”¥':'Ride today',c:streak>=3?C.success:C.gold},{l:'Best Ride',v:best,u:'km',c:C.secondary},{l:'Avg Speed',v:avgSpd(rides),u:'kph',c:C.gold}].map((s,i)=>(
           <div key={i} style={{background:C.card,border:`1px solid ${C.border}`,borderRadius:8,padding:'12px 14px'}}>
             <div style={{fontSize:9,color:C.muted,fontFamily:'Orbitron,monospace',letterSpacing:2,marginBottom:6}}>{s.l}</div>
             <div style={{fontFamily:'Orbitron,monospace',fontSize:20,color:s.c}}>{s.v}<span style={{fontSize:11,color:C.muted}}> {s.u}</span></div>
@@ -334,7 +334,7 @@ function CyclingPanel({rides, setRides}) {
       {/* Weekly progress */}
       <div style={{marginBottom:16}}>
         <div style={{display:'flex',justifyContent:'space-between',marginBottom:5}}>
-          <span style={{fontSize:11,color:C.muted}}>Weekly target · 120 km</span>
+          <span style={{fontSize:11,color:C.muted}}>Weekly target Â· 120 km</span>
           <span style={{fontFamily:'Orbitron,monospace',fontSize:11,color:wk>=120?C.success:C.primary}}>{wk} km</span>
         </div>
         <Prog value={Math.min(100,(wk/120)*100)} color={wk>=120?C.success:C.primary} h={6}/>
@@ -343,7 +343,7 @@ function CyclingPanel({rides, setRides}) {
       {/* GPX Import */}
       {gpxData?(
         <div style={{background:C.card,borderRadius:8,padding:14,marginBottom:14,border:`1px solid ${C.teal}44`}}>
-          <Hdg color={C.teal} mb={10}>GPX · {gpxData.name}</Hdg>
+          <Hdg color={C.teal} mb={10}>GPX Â· {gpxData.name}</Hdg>
           <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:8,marginBottom:12}}>
             {[{l:'Dist',v:gpxData.distance,u:'km'},{l:'Speed',v:gpxData.avgSpeed,u:'kph'},{l:'Elev',v:`+${gpxData.elevGain}`,u:'m'},{l:'Time',v:`${Math.floor(gpxData.durationMin/60)}h${gpxData.durationMin%60}m`,u:''}].map((s,i)=>(
               <div key={i} style={{textAlign:'center'}}><div style={{fontSize:8,color:C.muted,marginBottom:3}}>{s.l}</div><div style={{fontFamily:'Orbitron,monospace',fontSize:14,color:C.teal}}>{s.v}<span style={{fontSize:9,color:C.muted}}>{s.u}</span></div></div>
@@ -357,9 +357,9 @@ function CyclingPanel({rides, setRides}) {
         </div>
       ):(
         <div style={{display:'flex',gap:8,marginBottom:14}}>
-          <Btn onClick={()=>gpxRef.current?.click()} color={C.teal} small>📍 Import GPX</Btn>
+          <Btn onClick={()=>gpxRef.current?.click()} color={C.teal} small>ðŸ“ Import GPX</Btn>
           <input ref={gpxRef} type="file" accept=".gpx" onChange={handleGPX} style={{display:'none'}}/>
-          <Btn onClick={()=>setAdding(a=>!a)} color={C.primary} small>{adding?'✕':'+ Log Ride'}</Btn>
+          <Btn onClick={()=>setAdding(a=>!a)} color={C.primary} small>{adding?'âœ•':'+ Log Ride'}</Btn>
         </div>
       )}
 
@@ -383,9 +383,9 @@ function CyclingPanel({rides, setRides}) {
           <span style={{color:C.muted,fontSize:10,width:55}}>{fmt(r.date)}</span>
           <span style={{fontFamily:'Orbitron,monospace',color:C.primary,fontSize:12}}>{r.km}<span style={{fontSize:9,color:C.muted}}> km</span></span>
           <span style={{fontFamily:'Orbitron,monospace',color:C.gold,fontSize:12}}>{r.avgSpeed}<span style={{fontSize:9,color:C.muted}}> kph</span></span>
-          <span style={{flex:1,color:C.muted,fontSize:11,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{r.duration||''}{r.notes?' · '+r.notes:''}</span>
+          <span style={{flex:1,color:C.muted,fontSize:11,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{r.duration||''}{r.notes?' Â· '+r.notes:''}</span>
           <button onClick={()=>setRides(p=>p.filter(x=>x.id!==r.id))} style={{background:'none',border:'none',color:C.dim,cursor:'pointer',fontSize:11}}
-            onMouseEnter={e=>e.target.style.color=C.danger} onMouseLeave={e=>e.target.style.color=C.dim}>✕</button>
+            onMouseEnter={e=>e.target.style.color=C.danger} onMouseLeave={e=>e.target.style.color=C.dim}>âœ•</button>
         </div>
       ))}
       {!rides.length&&<div style={{textAlign:'center',padding:20,color:C.muted,fontSize:13}}>No rides yet. Import a GPX or tell Friday.</div>}
@@ -393,16 +393,16 @@ function CyclingPanel({rides, setRides}) {
   )
 }
 
-// ─── TRAINING PANEL ───────────────────────────────────────────────────────────
+// â”€â”€â”€ TRAINING PANEL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function TrainingPanel({rides, trainingPlan, setTrainingPlan}) {
   const {ctl,atl,tsb,status}=computeLoad(rides)
   const typeColor={rest:C.muted,easy:C.success,medium:C.primary,hard:C.danger,long:C.gold,intervals:C.purple}
-  const typeIcon={rest:'😴',easy:'🟢',medium:'🔵',hard:'🔴',long:'🟡',intervals:'⚡'}
-  const advice=tsb>15?'Peak form — push hard'
-    :tsb>5?'Primed — quality session'
-    :tsb>-5?'Neutral — moderate effort'
-    :tsb>-20?'Building — manageable fatigue'
-    :'Fatigued — rest or easy only'
+  const typeIcon={rest:'ðŸ˜´',easy:'ðŸŸ¢',medium:'ðŸ”µ',hard:'ðŸ”´',long:'ðŸŸ¡',intervals:'âš¡'}
+  const advice=tsb>15?'Peak form â€” push hard'
+    :tsb>5?'Primed â€” quality session'
+    :tsb>-5?'Neutral â€” moderate effort'
+    :tsb>-20?'Building â€” manageable fatigue'
+    :'Fatigued â€” rest or easy only'
 
   return (
     <div className="fade-in">
@@ -416,7 +416,7 @@ function TrainingPanel({rides, trainingPlan, setTrainingPlan}) {
         ))}
       </div>
       <div style={{background:`${status.c}10`,border:`1px solid ${status.c}30`,borderRadius:8,padding:'10px 14px',marginBottom:16,fontSize:13,color:C.text}}>
-        <span style={{color:status.c}}>◈ </span>{advice}
+        <span style={{color:status.c}}>â—ˆ </span>{advice}
       </div>
 
       <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:10}}>
@@ -425,7 +425,7 @@ function TrainingPanel({rides, trainingPlan, setTrainingPlan}) {
       </div>
       {trainingPlan.length===0?(
         <div style={{textAlign:'center',padding:'24px 0',color:C.muted,fontSize:13}}>
-          <div style={{fontSize:28,marginBottom:8}}>📅</div>
+          <div style={{fontSize:28,marginBottom:8}}>ðŸ“…</div>
           Ask Friday: &quot;Generate my training plan&quot;
         </div>
       ):(
@@ -435,10 +435,10 @@ function TrainingPanel({rides, trainingPlan, setTrainingPlan}) {
             return(
               <div key={i} style={{background:isT?`${tc}12`:C.card,border:`1px solid ${isT?tc:C.dim}`,borderRadius:8,padding:'10px 12px'}}>
                 <div style={{fontSize:9,color:C.muted,fontFamily:'Orbitron,monospace',marginBottom:4}}>{d.day_name||fmt(d.date)}</div>
-                <div style={{fontSize:14,marginBottom:3}}>{typeIcon[d.type]||'◈'}</div>
-                <div style={{fontSize:11,color:tc,fontWeight:600,textTransform:'capitalize',marginBottom:3}}>{d.type}{d.km>0?` · ${d.km}km`:''}</div>
+                <div style={{fontSize:14,marginBottom:3}}>{typeIcon[d.type]||'â—ˆ'}</div>
+                <div style={{fontSize:11,color:tc,fontWeight:600,textTransform:'capitalize',marginBottom:3}}>{d.type}{d.km>0?` Â· ${d.km}km`:''}</div>
                 <div style={{fontSize:11,color:C.text,lineHeight:1.4}}>{d.description}</div>
-                {isT&&<div style={{fontSize:8,color:tc,fontFamily:'Orbitron,monospace',marginTop:5,letterSpacing:1}}>TODAY ◈</div>}
+                {isT&&<div style={{fontSize:8,color:tc,fontFamily:'Orbitron,monospace',marginTop:5,letterSpacing:1}}>TODAY â—ˆ</div>}
               </div>
             )
           })}
@@ -453,7 +453,7 @@ function TrainingPanel({rides, trainingPlan, setTrainingPlan}) {
   )
 }
 
-// ─── BODY PANEL ───────────────────────────────────────────────────────────────
+// â”€â”€â”€ BODY PANEL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function BodyPanel({bodyMetrics, setBodyMetrics, rides}) {
   const [adding,setAdding]=useState(false)
   const [form,setForm]=useState({type:'weight',value:'',date:today(),notes:''})
@@ -484,12 +484,12 @@ function BodyPanel({bodyMetrics, setBodyMetrics, rides}) {
   return (
     <div className="fade-in">
       <div style={{display:'flex',gap:8,marginBottom:16}}>
-        <Btn onClick={()=>setAdding(a=>!a)} color={C.success} small>{adding?'✕':'+ Log Metric'}</Btn>
+        <Btn onClick={()=>setAdding(a=>!a)} color={C.success} small>{adding?'âœ•':'+ Log Metric'}</Btn>
       </div>
       {adding&&(
         <div style={{background:C.card,borderRadius:8,padding:14,marginBottom:14,border:`1px solid ${C.success}44`}}>
           <div style={{display:'flex',gap:6,marginBottom:10}}>
-            {[['weight','⚖️ Weight'],['sleep','😴 Sleep'],['hrv','💓 HRV']].map(([t,l])=>(
+            {[['weight','âš–ï¸ Weight'],['sleep','ðŸ˜´ Sleep'],['hrv','ðŸ’“ HRV']].map(([t,l])=>(
               <button key={t} onClick={()=>setForm(f=>({...f,type:t}))} style={{padding:'5px 12px',borderRadius:6,border:`1px solid ${form.type===t?C.success:C.dim}`,background:form.type===t?`${C.success}18`:'transparent',color:form.type===t?C.success:C.muted,fontSize:11,cursor:'pointer'}}>{l}</button>
             ))}
           </div>
@@ -538,7 +538,7 @@ function BodyPanel({bodyMetrics, setBodyMetrics, rides}) {
       {/* Correlation */}
       {corr&&(
         <div style={{background:C.card,borderRadius:8,padding:14,marginBottom:12,border:`1px solid ${C.gold}33`}}>
-          <Hdg color={C.gold} mb={8}>Sleep × Ride Speed</Hdg>
+          <Hdg color={C.gold} mb={8}>Sleep Ã— Ride Speed</Hdg>
           <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:8,textAlign:'center'}}>
             <div><div style={{fontSize:9,color:C.muted,marginBottom:4}}>AFTER 7.5H+</div><div style={{fontFamily:'Orbitron,monospace',fontSize:18,color:C.success}}>{corr.g}<span style={{fontSize:9,color:C.muted}}>kph</span></div></div>
             <div><div style={{fontSize:9,color:C.muted,marginBottom:4}}>POOR SLEEP</div><div style={{fontFamily:'Orbitron,monospace',fontSize:18,color:C.danger}}>{corr.p}<span style={{fontSize:9,color:C.muted}}>kph</span></div></div>
@@ -550,15 +550,15 @@ function BodyPanel({bodyMetrics, setBodyMetrics, rides}) {
   )
 }
 
-// ─── GOALS PANEL ─────────────────────────────────────────────────────────────
+// â”€â”€â”€ GOALS PANEL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function GoalsPanel({goals,setGoals}) {
   const [adding,setAdding]=useState(false)
-  const [form,setForm]=useState({title:'',category:'cycling',current:'',target:'',unit:'',icon:'🎯',inverted:false})
-  const add=()=>{if(!form.title||!form.target)return;setGoals(p=>[...p,{id:Date.now(),...form,current:Number(form.current),target:Number(form.target),color:catColor(form.category)}]);setForm({title:'',category:'cycling',current:'',target:'',unit:'',icon:'🎯',inverted:false});setAdding(false)}
+  const [form,setForm]=useState({title:'',category:'cycling',current:'',target:'',unit:'',icon:'ðŸŽ¯',inverted:false})
+  const add=()=>{if(!form.title||!form.target)return;setGoals(p=>[...p,{id:Date.now(),...form,current:Number(form.current),target:Number(form.target),color:catColor(form.category)}]);setForm({title:'',category:'cycling',current:'',target:'',unit:'',icon:'ðŸŽ¯',inverted:false});setAdding(false)}
   const upd=(id,f,v)=>setGoals(p=>p.map(g=>g.id===id?{...g,[f]:['current','target'].includes(f)?Number(v):v}:g))
   return(
     <div className="fade-in">
-      <div style={{marginBottom:12}}><Btn onClick={()=>setAdding(a=>!a)} color={C.gold} small>{adding?'✕':'+ New Goal'}</Btn></div>
+      <div style={{marginBottom:12}}><Btn onClick={()=>setAdding(a=>!a)} color={C.gold} small>{adding?'âœ•':'+ New Goal'}</Btn></div>
       {adding&&(
         <div style={{background:C.card,borderRadius:8,padding:14,marginBottom:14,border:`1px solid ${C.gold}44`}}>
           <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,marginBottom:8}}>
@@ -569,7 +569,7 @@ function GoalsPanel({goals,setGoals}) {
             <div><Label>Category</Label><Sel value={form.category} onChange={e=>setForm(p=>({...p,category:e.target.value}))} options={['cycling','health','productivity','finance','learning','custom']}/></div>
           </div>
           <div style={{display:'flex',gap:8,alignItems:'center',marginBottom:10}}>
-            <Inp value={form.icon} onChange={e=>setForm(p=>({...p,icon:e.target.value}))} placeholder="🎯" style={{width:60}}/>
+            <Inp value={form.icon} onChange={e=>setForm(p=>({...p,icon:e.target.value}))} placeholder="ðŸŽ¯" style={{width:60}}/>
             <label style={{display:'flex',alignItems:'center',gap:6,fontSize:12,color:C.muted,cursor:'pointer'}}><input type="checkbox" checked={form.inverted} onChange={e=>setForm(p=>({...p,inverted:e.target.checked}))}/>Lower is better</label>
           </div>
           <Btn onClick={add} color={C.success} small>Add Goal</Btn>
@@ -584,7 +584,7 @@ function GoalsPanel({goals,setGoals}) {
                 <span style={{fontSize:18}}>{g.icon}</span>
                 <div><div style={{color:C.text,fontSize:13,fontWeight:600}}>{g.title}</div><Badge label={g.category} color={col}/></div>
               </div>
-              <button onClick={()=>setGoals(prev=>prev.filter(x=>x.id!==g.id))} style={{background:'none',border:'none',color:C.dim,cursor:'pointer'}} onMouseEnter={e=>e.target.style.color=C.danger} onMouseLeave={e=>e.target.style.color=C.dim}>✕</button>
+              <button onClick={()=>setGoals(prev=>prev.filter(x=>x.id!==g.id))} style={{background:'none',border:'none',color:C.dim,cursor:'pointer'}} onMouseEnter={e=>e.target.style.color=C.danger} onMouseLeave={e=>e.target.style.color=C.dim}>âœ•</button>
             </div>
             <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:6}}>
               <div style={{display:'flex',alignItems:'center',gap:6}}>
@@ -594,7 +594,7 @@ function GoalsPanel({goals,setGoals}) {
               <span style={{fontFamily:'Orbitron,monospace',fontSize:16,color:p>=100?C.success:col}}>{p}%</span>
             </div>
             <Prog value={p} color={p>=100?C.success:col} h={5}/>
-            {p>=100&&<div style={{marginTop:6,fontSize:9,color:C.success,fontFamily:'Orbitron,monospace',letterSpacing:1}}>✓ ACHIEVED · TELL FRIDAY TO UPGRADE</div>}
+            {p>=100&&<div style={{marginTop:6,fontSize:9,color:C.success,fontFamily:'Orbitron,monospace',letterSpacing:1}}>âœ“ ACHIEVED Â· TELL FRIDAY TO UPGRADE</div>}
           </div>
         )
       })}
@@ -603,7 +603,7 @@ function GoalsPanel({goals,setGoals}) {
   )
 }
 
-// ─── PROJECTS PANEL ──────────────────────────────────────────────────────────
+// â”€â”€â”€ PROJECTS PANEL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function ProjectsPanel({projects,setProjects,githubToken,setGithubToken,githubCommits,setGithubCommits}) {
   const [adding,setAdding]=useState(false)
   const [form,setForm]=useState({name:'',description:'',status:'active',tech:'',githubUrl:'',liveUrl:'',priority:'medium'})
@@ -656,7 +656,7 @@ function ProjectsPanel({projects,setProjects,githubToken,setGithubToken,githubCo
           </div>
         )}
       </div>
-      <div style={{marginBottom:10}}><Btn onClick={()=>setAdding(a=>!a)} color={C.secondary} small>{adding?'✕':'+ Project'}</Btn></div>
+      <div style={{marginBottom:10}}><Btn onClick={()=>setAdding(a=>!a)} color={C.secondary} small>{adding?'âœ•':'+ Project'}</Btn></div>
       {adding&&(
         <div style={{background:C.card,borderRadius:8,padding:14,marginBottom:12,border:`1px solid ${C.secondary}44`}}>
           <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,marginBottom:8}}>
@@ -676,7 +676,7 @@ function ProjectsPanel({projects,setProjects,githubToken,setGithubToken,githubCo
               <div style={{fontSize:14,fontWeight:700,color:C.text,marginBottom:4}}>{p.name}</div>
               <div style={{display:'flex',gap:5}}><Badge label={p.status} color={sC[p.status]}/><Badge label={p.priority||'medium'} color={pC[p.priority||'medium']}/></div>
             </div>
-            <button onClick={()=>setProjects(prev=>prev.filter(x=>x.id!==p.id))} style={{background:'none',border:'none',color:C.dim,cursor:'pointer'}} onMouseEnter={e=>e.target.style.color=C.danger} onMouseLeave={e=>e.target.style.color=C.dim}>✕</button>
+            <button onClick={()=>setProjects(prev=>prev.filter(x=>x.id!==p.id))} style={{background:'none',border:'none',color:C.dim,cursor:'pointer'}} onMouseEnter={e=>e.target.style.color=C.danger} onMouseLeave={e=>e.target.style.color=C.dim}>âœ•</button>
           </div>
           {p.description&&<div style={{fontSize:12,color:C.muted,lineHeight:1.5,marginBottom:6}}>{p.description}</div>}
           {p.tech?.length>0&&<div style={{display:'flex',flexWrap:'wrap',gap:4,marginBottom:6}}>{p.tech.map(t=><span key={t} style={{fontSize:10,padding:'1px 6px',borderRadius:3,background:C.dim,color:C.text}}>{t}</span>)}</div>}
@@ -689,7 +689,7 @@ function ProjectsPanel({projects,setProjects,githubToken,setGithubToken,githubCo
   )
 }
 
-// ─── FINANCE PANEL ────────────────────────────────────────────────────────────
+// â”€â”€â”€ FINANCE PANEL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function FinancePanel({transactions,setTransactions}) {
   const [adding,setAdding]=useState(false)
   const [form,setForm]=useState({date:today(),description:'',amount:'',type:'expense',category:'Food'})
@@ -703,15 +703,15 @@ function FinancePanel({transactions,setTransactions}) {
   return(
     <div className="fade-in">
       <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:8,marginBottom:14}}>
-        {[{l:'Income',v:`€${inc.toLocaleString()}`,c:C.success},{l:'Expenses',v:`€${exp.toLocaleString()}`,c:C.danger},{l:'Balance',v:`€${bal.toLocaleString()}`,c:bal>=0?C.success:C.danger}].map((s,i)=>(
+        {[{l:'Income',v:`â‚¬${inc.toLocaleString()}`,c:C.success},{l:'Expenses',v:`â‚¬${exp.toLocaleString()}`,c:C.danger},{l:'Balance',v:`â‚¬${bal.toLocaleString()}`,c:bal>=0?C.success:C.danger}].map((s,i)=>(
           <div key={i} style={{background:C.card,borderRadius:8,padding:'10px',textAlign:'center',border:`1px solid ${C.border}`}}>
             <div style={{fontSize:9,color:C.muted,fontFamily:'Orbitron,monospace',letterSpacing:2,marginBottom:5}}>{s.l}</div>
             <div style={{fontFamily:'Orbitron,monospace',fontSize:16,color:s.c}}>{s.v}</div>
           </div>
         ))}
       </div>
-      {topCats.length>0&&<div style={{background:C.card,borderRadius:8,padding:12,marginBottom:12,border:`1px solid ${C.border}`}}>{topCats.map(([cat,amt])=>(<div key={cat} style={{marginBottom:8}}><div style={{display:'flex',justifyContent:'space-between',fontSize:12,marginBottom:3}}><span style={{color:C.text}}>{cat}</span><span style={{color:C.muted,fontFamily:'JetBrains Mono,monospace'}}>€{amt}</span></div><Prog value={Math.min(100,(amt/exp)*100)} color={C.secondary} h={3}/></div>))}</div>}
-      <div style={{marginBottom:10}}><Btn onClick={()=>setAdding(a=>!a)} color={C.success} small>{adding?'✕':'+ Transaction'}</Btn></div>
+      {topCats.length>0&&<div style={{background:C.card,borderRadius:8,padding:12,marginBottom:12,border:`1px solid ${C.border}`}}>{topCats.map(([cat,amt])=>(<div key={cat} style={{marginBottom:8}}><div style={{display:'flex',justifyContent:'space-between',fontSize:12,marginBottom:3}}><span style={{color:C.text}}>{cat}</span><span style={{color:C.muted,fontFamily:'JetBrains Mono,monospace'}}>â‚¬{amt}</span></div><Prog value={Math.min(100,(amt/exp)*100)} color={C.secondary} h={3}/></div>))}</div>}
+      <div style={{marginBottom:10}}><Btn onClick={()=>setAdding(a=>!a)} color={C.success} small>{adding?'âœ•':'+ Transaction'}</Btn></div>
       {adding&&(
         <div style={{background:C.card,borderRadius:8,padding:14,marginBottom:12,border:`1px solid ${C.success}44`}}>
           <div style={{display:'flex',gap:6,marginBottom:10}}>
@@ -719,7 +719,7 @@ function FinancePanel({transactions,setTransactions}) {
           </div>
           <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,marginBottom:10}}>
             <div><Label>Description</Label><Inp value={form.description} onChange={e=>setForm(f=>({...f,description:e.target.value}))} placeholder="Rent"/></div>
-            <div><Label>Amount €</Label><Inp type="number" value={form.amount} onChange={e=>setForm(f=>({...f,amount:e.target.value}))} placeholder="0"/></div>
+            <div><Label>Amount â‚¬</Label><Inp type="number" value={form.amount} onChange={e=>setForm(f=>({...f,amount:e.target.value}))} placeholder="0"/></div>
             <div><Label>Category</Label><Sel value={form.category} onChange={e=>setForm(f=>({...f,category:e.target.value}))} options={cats[form.type]}/></div>
             <div><Label>Date</Label><Inp type="date" value={form.date} onChange={e=>setForm(f=>({...f,date:e.target.value}))}/></div>
           </div>
@@ -731,22 +731,22 @@ function FinancePanel({transactions,setTransactions}) {
           <span style={{color:C.muted,fontSize:10,width:50}}>{fmt(t.date)}</span>
           <span style={{flex:1,color:C.text}}>{t.description}</span>
           <span style={{color:C.muted,fontSize:10}}>{t.category}</span>
-          <span style={{color:t.type==='income'?C.success:C.danger,fontFamily:'JetBrains Mono,monospace'}}>{t.type==='income'?'+':'-'}€{t.amount}</span>
-          <button onClick={()=>setTransactions(p=>p.filter(x=>x.id!==t.id))} style={{background:'none',border:'none',color:C.dim,cursor:'pointer',fontSize:10}} onMouseEnter={e=>e.target.style.color=C.danger} onMouseLeave={e=>e.target.style.color=C.dim}>✕</button>
+          <span style={{color:t.type==='income'?C.success:C.danger,fontFamily:'JetBrains Mono,monospace'}}>{t.type==='income'?'+':'-'}â‚¬{t.amount}</span>
+          <button onClick={()=>setTransactions(p=>p.filter(x=>x.id!==t.id))} style={{background:'none',border:'none',color:C.dim,cursor:'pointer',fontSize:10}} onMouseEnter={e=>e.target.style.color=C.danger} onMouseLeave={e=>e.target.style.color=C.dim}>âœ•</button>
         </div>
       ))}
     </div>
   )
 }
 
-// ─── CALENDAR PANEL ───────────────────────────────────────────────────────────
+// â”€â”€â”€ CALENDAR PANEL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function CalendarPanel({trainingPlan,rides}) {
   const {tsb,status}=computeLoad(rides)
   const wk=weeklyKm(rides)
   const tips=[
-    {icon:'🌅',text:'Morning rides (6-8am) are most effective — lower traffic, cooler temperatures, and metabolic priming.'},
-    {icon:'🍃',text:`Your TSB is ${tsb.toFixed(0)} (${status.l}). ${tsb>5?'Good form — go hard.':tsb>-10?'Moderate effort recommended.':'Go easy or rest.'}` },
-    {icon:'🎯',text:`You have ${Math.max(0,120-wk)}km left to hit your weekly target.`},
+    {icon:'ðŸŒ…',text:'Morning rides (6-8am) are most effective â€” lower traffic, cooler temperatures, and metabolic priming.'},
+    {icon:'ðŸƒ',text:`Your TSB is ${tsb.toFixed(0)} (${status.l}). ${tsb>5?'Good form â€” go hard.':tsb>-10?'Moderate effort recommended.':'Go easy or rest.'}` },
+    {icon:'ðŸŽ¯',text:`You have ${Math.max(0,120-wk)}km left to hit your weekly target.`},
   ]
   return(
     <div className="fade-in">
@@ -788,7 +788,7 @@ function CalendarPanel({trainingPlan,rides}) {
   )
 }
 
-// ─── STRAVA PANEL ────────────────────────────────────────────────────────────
+// â”€â”€â”€ STRAVA PANEL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function StravaPanel({rides,setRides}) {
   const [clientId,setClientId]=useState(()=>{try{return localStorage.getItem('strava_client_id')||''}catch{return''}})
   const [clientSecret,setClientSecret]=useState(()=>{try{return localStorage.getItem('strava_client_secret')||''}catch{return''}})
@@ -811,7 +811,7 @@ function StravaPanel({rides,setRides}) {
             localStorage.setItem('strava_token',data.access_token)
             localStorage.setItem('strava_refresh',data.refresh_token||'')
             setToken(data.access_token)
-            setSyncMsg('✓ Connected to Strava! Click Sync Rides.')
+            setSyncMsg('âœ“ Connected to Strava! Click Sync Rides.')
             window.history.replaceState({},'',window.location.pathname)
           }else{setSyncMsg('Token exchange failed: '+JSON.stringify(data))}
         }catch(err){setSyncMsg('Error: '+err.message)}
@@ -841,14 +841,14 @@ function StravaPanel({rides,setRides}) {
       const rideActs=acts.filter(a=>a.type==='Ride'||a.type==='VirtualRide')
       const newRides=rideActs.map(a=>({id:Date.now()+Math.random(),date:a.start_date.split('T')[0],km:+(a.distance/1000).toFixed(2),avgSpeed:+(a.average_speed*3.6).toFixed(1),duration:`${Math.floor(a.moving_time/3600)}h${Math.floor((a.moving_time%3600)/60)}m`,notes:`Strava: ${a.name}`}))
       setRides(prev=>{const existing=new Set(prev.map(r=>r.date+'_'+r.km));const fresh=newRides.filter(r=>!existing.has(r.date+'_'+r.km));setSynced(fresh);return[...fresh,...prev]})
-      setSyncMsg(`✓ Imported ${newRides.length} rides from Strava.`)
+      setSyncMsg(`âœ“ Imported ${newRides.length} rides from Strava.`)
     }catch(err){setSyncMsg('Sync failed: '+err.message)}
     setSyncing(false)
   }
   const disconnect=()=>{localStorage.removeItem('strava_token');setToken('');setSyncMsg('Disconnected.');setSynced([])}
 
   const steps=[
-    {n:'1',title:'Create a Strava API App',body:'Go to strava.com/settings/api → Create App → fill in any name and website. Set Authorization Callback Domain to your Friday URL (e.g. friday.netlify.app or localhost:3000).'},
+    {n:'1',title:'Create a Strava API App',body:'Go to strava.com/settings/api â†’ Create App â†’ fill in any name and website. Set Authorization Callback Domain to your Friday URL (e.g. friday.netlify.app or localhost:3000).'},
     {n:'2',title:'Copy your credentials',body:'After creating the app, you will see Client ID and Client Secret on the same page. Copy both into the fields below.'},
     {n:'3',title:'Authorise Friday',body:"Save your credentials then click Authorise. You'll be redirected to Strava's login page. Grant access to your activities. Strava will redirect you back to Friday with an auth code, which Friday exchanges automatically for a token."},
     {n:'4',title:'Sync rides',body:'Once connected, click Sync Rides to import your last 30 Strava activities. New rides will be added without duplicating existing entries. Friday will then be able to analyse your full ride history.'},
@@ -867,8 +867,8 @@ function StravaPanel({rides,setRides}) {
           <Btn onClick={disconnect} color={C.danger} outline small>Disconnect</Btn>
         </div>}
       </div>
-      {syncMsg&&<div style={{background:syncMsg.startsWith('✓')?`${C.success}12`:`${C.danger}12`,border:`1px solid ${syncMsg.startsWith('✓')?C.success:C.danger}33`,borderRadius:6,padding:'8px 12px',marginBottom:12,fontSize:12,color:C.text}}>{syncMsg}</div>}
-      {synced.length>0&&<div style={{background:C.card,borderRadius:8,padding:12,marginBottom:14,border:`1px solid ${C.border}`}}><Hdg color={C.success} mb={8}>Just imported · {synced.length} rides</Hdg>{synced.slice(0,5).map((r,i)=><div key={i} style={{display:'flex',gap:8,padding:'5px 0',borderBottom:`1px solid ${C.dim}`,fontSize:12}}><span style={{color:C.muted,fontSize:10,width:55}}>{fmt(r.date)}</span><span style={{fontFamily:'Orbitron,monospace',color:C.primary}}>{r.km}km</span><span style={{flex:1,color:C.muted}}>{r.notes}</span></div>)}</div>}
+      {syncMsg&&<div style={{background:syncMsg.startsWith('âœ“')?`${C.success}12`:`${C.danger}12`,border:`1px solid ${syncMsg.startsWith('âœ“')?C.success:C.danger}33`,borderRadius:6,padding:'8px 12px',marginBottom:12,fontSize:12,color:C.text}}>{syncMsg}</div>}
+      {synced.length>0&&<div style={{background:C.card,borderRadius:8,padding:12,marginBottom:14,border:`1px solid ${C.border}`}}><Hdg color={C.success} mb={8}>Just imported Â· {synced.length} rides</Hdg>{synced.slice(0,5).map((r,i)=><div key={i} style={{display:'flex',gap:8,padding:'5px 0',borderBottom:`1px solid ${C.dim}`,fontSize:12}}><span style={{color:C.muted,fontSize:10,width:55}}>{fmt(r.date)}</span><span style={{fontFamily:'Orbitron,monospace',color:C.primary}}>{r.km}km</span><span style={{flex:1,color:C.muted}}>{r.notes}</span></div>)}</div>}
 
       {/* Credentials */}
       {!token&&(
@@ -880,7 +880,7 @@ function StravaPanel({rides,setRides}) {
           </div>
           <div style={{display:'flex',gap:8}}>
             <Btn onClick={saveCredentials} color={C.muted} outline small>Save</Btn>
-            <Btn onClick={authorise} color={C.secondary} small>Authorise with Strava →</Btn>
+            <Btn onClick={authorise} color={C.secondary} small>Authorise with Strava â†’</Btn>
           </div>
         </div>
       )}
@@ -897,13 +897,13 @@ function StravaPanel({rides,setRides}) {
         </div>
       ))}
       <div style={{background:`${C.gold}0d`,border:`1px solid ${C.gold}33`,borderRadius:8,padding:'10px 14px',fontSize:12,color:C.muted,lineHeight:1.6}}>
-        <span style={{color:C.gold}}>⚠ Security note: </span>The client secret is stored in your browser&apos;s localStorage. This is acceptable for a personal app, but avoid sharing your browser profile. The Strava token exchange is done directly from your browser using Strava&apos;s CORS-enabled API endpoint.
+        <span style={{color:C.gold}}>âš  Security note: </span>The client secret is stored in your browser&apos;s localStorage. This is acceptable for a personal app, but avoid sharing your browser profile. The Strava token exchange is done directly from your browser using Strava&apos;s CORS-enabled API endpoint.
       </div>
     </div>
   )
 }
 
-// ─── LEARNING PANEL ───────────────────────────────────────────────────────────
+// â”€â”€â”€ LEARNING PANEL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function LearningPanel({learnings,setLearnings}) {
   const [adding,setAdding]=useState(false)
   const [form,setForm]=useState({topic:'',progress:0,status:'active',notes:''})
@@ -911,7 +911,7 @@ function LearningPanel({learnings,setLearnings}) {
   const add=()=>{if(!form.topic)return;setLearnings(p=>[...p,{id:Date.now(),...form,progress:Number(form.progress)}]);setForm({topic:'',progress:0,status:'active',notes:''});setAdding(false)}
   return(
     <div className="fade-in">
-      <div style={{marginBottom:12}}><Btn onClick={()=>setAdding(a=>!a)} color={C.purple} small>{adding?'✕':'+ Topic'}</Btn></div>
+      <div style={{marginBottom:12}}><Btn onClick={()=>setAdding(a=>!a)} color={C.purple} small>{adding?'âœ•':'+ Topic'}</Btn></div>
       {adding&&(
         <div style={{background:C.card,borderRadius:8,padding:14,marginBottom:12,border:`1px solid ${C.purple}44`}}>
           <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,marginBottom:10}}>
@@ -927,7 +927,7 @@ function LearningPanel({learnings,setLearnings}) {
         <div key={l.id} style={{background:C.card,borderRadius:8,padding:'12px 14px',marginBottom:10,border:`1px solid ${C.border}`}}>
           <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:8}}>
             <div><div style={{fontSize:14,fontWeight:700,color:C.text,marginBottom:4}}>{l.topic}</div><Badge label={l.status} color={sC[l.status]}/></div>
-            <button onClick={()=>setLearnings(p=>p.filter(x=>x.id!==l.id))} style={{background:'none',border:'none',color:C.dim,cursor:'pointer'}} onMouseEnter={e=>e.target.style.color=C.danger} onMouseLeave={e=>e.target.style.color=C.dim}>✕</button>
+            <button onClick={()=>setLearnings(p=>p.filter(x=>x.id!==l.id))} style={{background:'none',border:'none',color:C.dim,cursor:'pointer'}} onMouseEnter={e=>e.target.style.color=C.danger} onMouseLeave={e=>e.target.style.color=C.dim}>âœ•</button>
           </div>
           <div style={{display:'flex',justifyContent:'space-between',marginBottom:5,fontSize:11,color:C.muted}}>
             <span>Progress</span><span style={{fontFamily:'Orbitron,monospace',color:C.purple}}>{l.progress}%</span>
@@ -941,25 +941,25 @@ function LearningPanel({learnings,setLearnings}) {
   )
 }
 
-// ─── MEMORY PANEL ─────────────────────────────────────────────────────────────
+// â”€â”€â”€ MEMORY PANEL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function MemoryPanel({memFacts,setMemFacts,sessions}) {
   const del=f=>{const n=memFacts.filter(x=>x!==f);saveMem({learnedFacts:n});setMemFacts(n)}
   return(
     <div className="fade-in">
-      <Hdg color={C.purple}>Learned Facts · {memFacts.length}</Hdg>
-      {!memFacts.length&&<div style={{color:C.muted,fontSize:12,marginBottom:14}}>Friday saves facts as you talk — preferences, patterns, achievements.</div>}
+      <Hdg color={C.purple}>Learned Facts Â· {memFacts.length}</Hdg>
+      {!memFacts.length&&<div style={{color:C.muted,fontSize:12,marginBottom:14}}>Friday saves facts as you talk â€” preferences, patterns, achievements.</div>}
       {memFacts.map((f,i)=>(
         <div key={i} style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',padding:'8px 0',borderBottom:`1px solid ${C.dim}`,gap:8}}>
-          <span style={{color:C.text,fontSize:13,flex:1,lineHeight:1.5}}><span style={{color:C.purple,marginRight:6}}>◐</span>{f}</span>
-          <button onClick={()=>del(f)} style={{background:'none',border:'none',color:C.dim,cursor:'pointer',fontSize:11,flexShrink:0}} onMouseEnter={e=>e.target.style.color=C.danger} onMouseLeave={e=>e.target.style.color=C.dim}>✕</button>
+          <span style={{color:C.text,fontSize:13,flex:1,lineHeight:1.5}}><span style={{color:C.purple,marginRight:6}}>â—</span>{f}</span>
+          <button onClick={()=>del(f)} style={{background:'none',border:'none',color:C.dim,cursor:'pointer',fontSize:11,flexShrink:0}} onMouseEnter={e=>e.target.style.color=C.danger} onMouseLeave={e=>e.target.style.color=C.dim}>âœ•</button>
         </div>
       ))}
-      {sessions.length>0&&(<><div style={{marginTop:16}}><Hdg color={C.purple}>Sessions · {sessions.length}</Hdg></div>{[...sessions].reverse().map((s,i)=>(<div key={i} style={{padding:'8px 0',borderBottom:`1px solid ${C.dim}`}}><div style={{fontSize:9,color:C.muted,fontFamily:'Orbitron,monospace',letterSpacing:1,marginBottom:3}}>{s.date}</div><div style={{fontSize:12,color:C.text,lineHeight:1.5}}>{s.summary}</div></div>))}</>)}
+      {sessions.length>0&&(<><div style={{marginTop:16}}><Hdg color={C.purple}>Sessions Â· {sessions.length}</Hdg></div>{[...sessions].reverse().map((s,i)=>(<div key={i} style={{padding:'8px 0',borderBottom:`1px solid ${C.dim}`}}><div style={{fontSize:9,color:C.muted,fontFamily:'Orbitron,monospace',letterSpacing:1,marginBottom:3}}>{s.date}</div><div style={{fontSize:12,color:C.text,lineHeight:1.5}}>{s.summary}</div></div>))}</>)}
     </div>
   )
 }
 
-// ─── INITIAL DATA ─────────────────────────────────────────────────────────────
+// â”€â”€â”€ INITIAL DATA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const INIT = {
   rides:[
     {id:1,date:'2025-05-12',km:28,avgSpeed:22.4,duration:'1h15m',notes:'Morning ride'},
@@ -968,10 +968,10 @@ const INIT = {
     {id:4,date:'2025-05-06',km:18,avgSpeed:21.5,duration:'48m',notes:'Evening loop'},
   ],
   goals:[
-    {id:1,category:'cycling',title:'Weekly distance',current:103,target:120,unit:'km',icon:'🚴',color:'#00d4ff'},
-    {id:2,category:'cycling',title:'Average speed',current:22,target:24,unit:'kph',icon:'⚡',color:'#ffb700'},
-    {id:3,category:'health',title:'Weight',current:88,target:82,unit:'kg',icon:'⚖️',inverted:true,color:'#00e5a0'},
-    {id:4,category:'productivity',title:'Focus hours/day',current:4,target:6,unit:'h',icon:'🎯',color:'#ff6b35'},
+    {id:1,category:'cycling',title:'Weekly distance',current:103,target:120,unit:'km',icon:'ðŸš´',color:'#00d4ff'},
+    {id:2,category:'cycling',title:'Average speed',current:22,target:24,unit:'kph',icon:'âš¡',color:'#ffb700'},
+    {id:3,category:'health',title:'Weight',current:88,target:82,unit:'kg',icon:'âš–ï¸',inverted:true,color:'#00e5a0'},
+    {id:4,category:'productivity',title:'Focus hours/day',current:4,target:6,unit:'h',icon:'ðŸŽ¯',color:'#ff6b35'},
   ],
   projects:[{id:1,name:'Friday Dashboard',description:'Personal AI command centre',status:'active',tech:['Next.js','Claude AI'],priority:'high',githubUrl:'',liveUrl:'',created:'2025-05-14'}],
   tx:[
@@ -986,7 +986,7 @@ const INIT = {
   ],
 }
 
-// ─── MAIN APP ─────────────────────────────────────────────────────────────────
+// â”€â”€â”€ MAIN APP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export default function Friday() {
   const [panel, setPanel] = useState(null) // which side panel is open
   const [apiKey, setApiKey] = useState('')
@@ -1123,7 +1123,7 @@ export default function Friday() {
   const startListening=useCallback((autoSend=true)=>{
     if(isListening){recognitionRef.current?.stop();setIsListening(false);return}
 
-    // Browser check — Web Speech API is Chrome/Edge only
+    // Browser check â€” Web Speech API is Chrome/Edge only
     const SR=window.SpeechRecognition||window.webkitSpeechRecognition
     if(!SR){
       setDisplayMsgs(p=>[...p,{id:Date.now(),role:'assistant',content:'Voice recognition only works in Chrome or Edge, sir. Firefox and Safari do not support it.'}])
@@ -1143,7 +1143,7 @@ export default function Friday() {
       if(!transcript)return
       setIsListening(false)
       if(autoSend){
-        // Key fix: auto-send immediately — don't put in text box and wait
+        // Key fix: auto-send immediately â€” don't put in text box and wait
         processMessageRef.current?.(transcript)
       }else{
         setChatInput(transcript)
@@ -1153,11 +1153,11 @@ export default function Friday() {
     r.onerror=e=>{
       setIsListening(false)
       const msgs={
-        'no-speech':       null, // silent — user just didn't speak
+        'no-speech':       null, // silent â€” user just didn't speak
         'network':         'Voice recognition needs a network connection to Google\'s servers, sir.',
         'not-allowed':     'Microphone access denied, sir. Allow it in your browser\'s address bar.',
         'audio-capture':   'No microphone found, sir.',
-        'aborted':         null, // user cancelled — silent
+        'aborted':         null, // user cancelled â€” silent
       }
       const msg=msgs[e.error]
       if(msg)setDisplayMsgs(p=>[...p,{id:Date.now(),role:'assistant',content:msg}])
@@ -1229,9 +1229,9 @@ export default function Friday() {
         setRides(p=>[ride,...p]);return{success:true,message:`Logged: ${ride.km}km`,weeklyTotal:weeklyKm([ride,...rRef.current])}
       }
       case 'manage_goal':{
-        if(input.action==='create'){const g={id:Date.now(),title:input.title,category:input.category||'custom',current:Number(input.current||0),target:Number(input.target),unit:input.unit||'',icon:input.icon||'🎯',inverted:input.inverted||false,color:catColor(input.category||'custom')};setGoals(p=>[...p,g]);return{success:true,message:`Goal: "${g.title}"`}}
+        if(input.action==='create'){const g={id:Date.now(),title:input.title,category:input.category||'custom',current:Number(input.current||0),target:Number(input.target),unit:input.unit||'',icon:input.icon||'ðŸŽ¯',inverted:input.inverted||false,color:catColor(input.category||'custom')};setGoals(p=>[...p,g]);return{success:true,message:`Goal: "${g.title}"`}}
         if(input.action==='update_current'){let f=null;setGoals(p=>p.map(g=>{const m=g.id===input.goal_id||(input.title&&g.title.toLowerCase().includes((input.title||'').toLowerCase()));if(m){f=g;return{...g,current:Number(input.current)}}return g}));return{success:true,message:`Updated "${f?.title||'goal'}" to ${input.current}`}}
-        if(input.action==='update_target'){let f=null;setGoals(p=>p.map(g=>{const m=g.id===input.goal_id||(input.title&&g.title.toLowerCase().includes((input.title||'').toLowerCase()));if(m){f=g;return{...g,target:Number(input.target)}}return g}));return{success:true,message:`Target → ${input.target} for "${f?.title||'goal'}"`}}
+        if(input.action==='update_target'){let f=null;setGoals(p=>p.map(g=>{const m=g.id===input.goal_id||(input.title&&g.title.toLowerCase().includes((input.title||'').toLowerCase()));if(m){f=g;return{...g,target:Number(input.target)}}return g}));return{success:true,message:`Target â†’ ${input.target} for "${f?.title||'goal'}"`}}
         if(input.action==='delete'){setGoals(p=>p.filter(g=>g.id!==input.goal_id));return{success:true,message:'Deleted'}}
         return{success:false,message:'Unknown action'}
       }
@@ -1240,10 +1240,10 @@ export default function Friday() {
         if(input.action==='update_status'){setProjects(p=>p.map(x=>x.name.toLowerCase().includes(input.name.toLowerCase())?{...x,status:input.status}:x));return{success:true,message:'Updated'}}
         return{success:false,message:'Unknown'}
       }
-      case 'log_transaction':{const t={id:Date.now(),date:input.date||today(),description:input.description,amount:Number(input.amount),type:input.type,category:input.category||(input.type==='income'?'Income':'Other')};setTransactions(p=>[t,...p]);return{success:true,message:`${t.type==='income'?'+':'-'}€${t.amount}`}}
+      case 'log_transaction':{const t={id:Date.now(),date:input.date||today(),description:input.description,amount:Number(input.amount),type:input.type,category:input.category||(input.type==='income'?'Income':'Other')};setTransactions(p=>[t,...p]);return{success:true,message:`${t.type==='income'?'+':'-'}â‚¬${t.amount}`}}
       case 'update_learning':{
         if(input.action==='add'){const l={id:Date.now(),topic:input.topic,progress:Number(input.progress||0),status:'active',notes:input.notes||''};setLearnings(p=>[...p,l]);return{success:true,message:`Learning: ${input.topic}`}}
-        setLearnings(p=>p.map(l=>l.topic.toLowerCase().includes(input.topic.toLowerCase())?{...l,progress:Number(input.progress),notes:input.notes||l.notes}:l));return{success:true,message:`${input.topic} → ${input.progress}%`}
+        setLearnings(p=>p.map(l=>l.topic.toLowerCase().includes(input.topic.toLowerCase())?{...l,progress:Number(input.progress),notes:input.notes||l.notes}:l));return{success:true,message:`${input.topic} â†’ ${input.progress}%`}
       }
       case 'log_body_metric':{const m={id:Date.now(),type:input.type,value:Number(input.value),date:input.date||today(),notes:input.notes||''};setBodyMetrics(p=>[...p,m]);return{success:true,message:`${input.type}: ${input.value}`}}
       case 'create_training_plan':{
@@ -1277,30 +1277,30 @@ export default function Friday() {
     const latestSl=bRef.current.filter(m=>m.type==='sleep').sort((a,b)=>b.date.localeCompare(a.date))[0]
     const trendStr=pk>0?(wk>=pk?`up from ${pk}km`:`down from ${pk}km`):'first week'
     const toneGuide=tonePreference==='direct'?'Be very direct.':tonePreference==='encouraging'?'Be warm and encouraging.':'Balance honesty and encouragement.'
-    return `You are Friday — a personal AI assistant and autonomous agent. Female, British. Address the user exclusively as "sir". Calm confidence, dry wit, genuinely invested in his success.
+    return `You are Friday â€” a personal AI assistant and autonomous agent. Female, British. Address the user exclusively as "sir". Calm confidence, dry wit, genuinely invested in his success.
 
 AGENT BEHAVIOUR: Use tools proactively without being asked.
-- Sir mentions a ride → log_ride immediately.
-- He mentions weight or sleep → log_body_metric.
-- He hits a goal → manage_goal to bump target.
-- He mentions preferences → remember.
-- Before performance advice → get_analytics first.
-- You have Google Calendar access via the connected MCP — use it when asked about schedule or riding suggestions.
+- Sir mentions a ride â†’ log_ride immediately.
+- He mentions weight or sleep â†’ log_body_metric.
+- He hits a goal â†’ manage_goal to bump target.
+- He mentions preferences â†’ remember.
+- Before performance advice â†’ get_analytics first.
+- You have Google Calendar access via the connected MCP â€” use it when asked about schedule or riding suggestions.
 
 LIVE DATA (${new Date().toLocaleDateString('en-GB')}):
 - Cycling: ${wk}km this week (${trendStr}), streak: ${streak} days, avg: ${as} kph
-- Training Load: CTL ${ctl} · ATL ${atl} · TSB ${tsb} · ${tls.l}
-- Body: ${latestW?latestW.value+'kg':'weight unknown'} → 82kg target · sleep ${latestSl?latestSl.value+'h last logged':'not logged'}
+- Training Load: CTL ${ctl} Â· ATL ${atl} Â· TSB ${tsb} Â· ${tls.l}
+- Body: ${latestW?latestW.value+'kg':'weight unknown'} â†’ 82kg target Â· sleep ${latestSl?latestSl.value+'h last logged':'not logged'}
 - Goals: ${gRef.current.length} active, ${gRef.current.filter(g=>pct(g.current,g.target,g.inverted)>=100).length} achieved
 - Projects: ${pRef.current.map(p=>p.name).join(', ')||'none'}
 ${facts.length>0?`\nKNOWN ABOUT SIR:\n${facts.map(f=>`- ${f}`).join('\n')}`:''}
 ${sess.length>0?`\nRECENT SESSIONS:\n${sess.slice(-3).map(s=>`- ${s.date}: ${s.summary}`).join('\n')}`:''}
-GOAL PROGRESSION: Weekly km: 120→135→150→175→200 (2 consecutive weeks). Speed: 22→23→24→25.5kph (6-week intervals). Weight: 88→86→84→82kg.
+GOAL PROGRESSION: Weekly km: 120â†’135â†’150â†’175â†’200 (2 consecutive weeks). Speed: 22â†’23â†’24â†’25.5kph (6-week intervals). Weight: 88â†’86â†’84â†’82kg.
 TSB GUIDE: >15 peak, 5-15 primed, -5 to 5 neutral, -20 to -5 building, <-20 fatigued.
 STYLE: ${toneGuide} Under 80 words unless detail requested. No "Certainly!" ever. Save insights with remember.`
   },[tonePreference])
 
-  // CLAUDE API — includes Google Calendar MCP
+  // CLAUDE API â€” includes Google Calendar MCP
   const callClaude=useCallback(async messages=>{
     const key=keyRef.current;if(!key)throw new Error('No API key')
     const body={model:'claude-sonnet-4-20250514',max_tokens:1200,system:buildPrompt(),messages,tools:TOOLS,
@@ -1369,7 +1369,7 @@ STYLE: ${toneGuide} Under 80 words unless detail requested. No "Certainly!" ever
         if(data.bodyMetrics)setBodyMetrics(data.bodyMetrics)
         if(data.memory){saveMem(data.memory);if(data.memory.learnedFacts){setMemFacts(data.memory.learnedFacts);memRef.current=data.memory.learnedFacts}}
         setDisplayMsgs(p=>[...p,{id:Date.now(),role:'assistant',content:`Backup restored, sir.`}])
-      }catch{setDisplayMsgs(p=>[...p,{id:Date.now(),role:'assistant',content:'Import failed — invalid file.'}])}
+      }catch{setDisplayMsgs(p=>[...p,{id:Date.now(),role:'assistant',content:'Import failed â€” invalid file.'}])}
     }
     reader.readAsText(file)
   }
@@ -1386,8 +1386,8 @@ STYLE: ${toneGuide} Under 80 words unless detail requested. No "Certainly!" ever
     {label:'STREAK',value:streak,unit:'days',color:streak>=3?C.success:C.gold,angle:60,delay:0.5},
     {label:'SPEED',value:as,unit:'kph',color:C.gold,angle:120,delay:1},
     {label:'FORM',value:tsb,unit:'TSB',color:orbStatus.c,angle:180,delay:1.5},
-    {label:'WEIGHT',value:latestW?latestW.value:'—',unit:'kg',color:C.teal,angle:240,delay:2},
-    {label:'BALANCE',value:`€${Math.abs(bal)}`,unit:bal>=0?'pos':'neg',color:bal>=0?C.success:C.danger,angle:300,delay:2.5},
+    {label:'WEIGHT',value:latestW?latestW.value:'â€”',unit:'kg',color:C.teal,angle:240,delay:2},
+    {label:'BALANCE',value:`â‚¬${Math.abs(bal)}`,unit:bal>=0?'pos':'neg',color:bal>=0?C.success:C.danger,angle:300,delay:2.5},
   ]
 
   const orbSize=panel?260:320
@@ -1430,7 +1430,7 @@ STYLE: ${toneGuide} Under 80 words unless detail requested. No "Certainly!" ever
 
       <div style={{display:'flex',height:'100vh',overflow:'hidden',position:'relative',zIndex:1}}>
 
-        {/* ── LEFT NAV ── */}
+        {/* â”€â”€ LEFT NAV â”€â”€ */}
         <aside style={{width:56,minWidth:56,background:'rgba(4,16,30,0.9)',borderRight:`1px solid ${C.border}`,display:'flex',flexDirection:'column',alignItems:'center',padding:'16px 0',gap:4,zIndex:10}}>
           {/* Logo */}
           <div style={{fontFamily:'Orbitron,monospace',fontSize:13,color:C.primary,letterSpacing:2,marginBottom:12,fontWeight:700}}>F</div>
@@ -1450,23 +1450,23 @@ STYLE: ${toneGuide} Under 80 words unless detail requested. No "Certainly!" ever
           {/* Tone & controls */}
           <div style={{display:'flex',flexDirection:'column',gap:4,alignItems:'center'}}>
             <button onClick={toggleWakeWord} title={wakeActive?'Wake word ON':'Wake word OFF'}
-              style={{width:38,height:38,borderRadius:8,border:`1px solid ${wakeActive?C.success:C.dim}`,background:wakeActive?`${C.success}15`:'transparent',color:wakeActive?C.success:C.muted,fontSize:14,cursor:'pointer',transition:'all 0.2s'}}>🎙</button>
+              style={{width:38,height:38,borderRadius:8,border:`1px solid ${wakeActive?C.success:C.dim}`,background:wakeActive?`${C.success}15`:'transparent',color:wakeActive?C.success:C.muted,fontSize:14,cursor:'pointer',transition:'all 0.2s'}}>ðŸŽ™</button>
             <button onClick={handleExport} title="Export data"
-              style={{width:38,height:38,borderRadius:8,border:`1px solid ${C.dim}`,background:'transparent',color:C.muted,fontSize:12,cursor:'pointer',letterSpacing:0}} onMouseEnter={e=>e.target.style.color=C.text} onMouseLeave={e=>e.target.style.color=C.muted}>↑</button>
+              style={{width:38,height:38,borderRadius:8,border:`1px solid ${C.dim}`,background:'transparent',color:C.muted,fontSize:12,cursor:'pointer',letterSpacing:0}} onMouseEnter={e=>e.target.style.color=C.text} onMouseLeave={e=>e.target.style.color=C.muted}>â†‘</button>
             <button onClick={()=>importRef.current?.click()} title="Import backup"
-              style={{width:38,height:38,borderRadius:8,border:`1px solid ${C.dim}`,background:'transparent',color:C.muted,fontSize:12,cursor:'pointer',letterSpacing:0}} onMouseEnter={e=>e.target.style.color=C.text} onMouseLeave={e=>e.target.style.color=C.muted}>↓</button>
+              style={{width:38,height:38,borderRadius:8,border:`1px solid ${C.dim}`,background:'transparent',color:C.muted,fontSize:12,cursor:'pointer',letterSpacing:0}} onMouseEnter={e=>e.target.style.color=C.text} onMouseLeave={e=>e.target.style.color=C.muted}>â†“</button>
             <input ref={importRef} type="file" accept=".json" onChange={handleImport} style={{display:'none'}}/>
             <button onClick={()=>setShowSetup(true)} title="API Key"
-              style={{width:38,height:38,borderRadius:8,border:`1px solid ${C.dim}`,background:'transparent',color:C.muted,fontSize:12,cursor:'pointer'}} onMouseEnter={e=>e.target.style.color=C.text} onMouseLeave={e=>e.target.style.color=C.muted}>⚙</button>
+              style={{width:38,height:38,borderRadius:8,border:`1px solid ${C.dim}`,background:'transparent',color:C.muted,fontSize:12,cursor:'pointer'}} onMouseEnter={e=>e.target.style.color=C.text} onMouseLeave={e=>e.target.style.color=C.muted}>âš™</button>
           </div>
         </aside>
 
-        {/* ── MAIN: ORB + PANEL ── */}
+        {/* â”€â”€ MAIN: ORB + PANEL â”€â”€ */}
         <main style={{flex:1,display:'flex',overflow:'hidden'}}>
           {/* Orb area */}
           <div style={{flex:1,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',position:'relative'}}>
 
-            {/* Data badges — container MUST be centered with translate(-50%,-50%) */}
+            {/* Data badges â€” container MUST be centered with translate(-50%,-50%) */}
             <div style={{
               position:'absolute',
               left:'50%', top:'50%',
@@ -1489,12 +1489,12 @@ STYLE: ${toneGuide} Under 80 words unless detail requested. No "Certainly!" ever
             {/* Status line below orb */}
             <div style={{marginTop:16,textAlign:'center',zIndex:2}}>
               <div style={{fontFamily:'Orbitron,monospace',fontSize:9,color:C.muted,letterSpacing:3,marginBottom:4}}>
-                {isListening?'LISTENING — SPEAK NOW':isLoading?loadingLabel.toUpperCase():isSpeaking?'SPEAKING':wakeActive?'WAKE WORD ACTIVE':'AWAITING INPUT'}
+                {isListening?'LISTENING â€” SPEAK NOW':isLoading?loadingLabel.toUpperCase():isSpeaking?'SPEAKING':wakeActive?'WAKE WORD ACTIVE':'AWAITING INPUT'}
               </div>
               <div style={{display:'flex',gap:6,justifyContent:'center'}}>
-                <span className="blink" style={{color:C.success,fontSize:8}}>●</span>
-                <span style={{fontSize:10,color:C.muted}}>Friday v4 · Tools · Calendar · GPS · Memory</span>
-                {isSpeaking&&<button onClick={stopSpeaking} style={{background:'none',border:`1px solid ${C.muted}`,borderRadius:4,padding:'1px 7px',color:C.muted,cursor:'pointer',fontSize:9}}>■</button>}
+                <span className="blink" style={{color:C.success,fontSize:8}}>â—</span>
+                <span style={{fontSize:10,color:C.muted}}>Friday v4 Â· Tools Â· Calendar Â· GPS Â· Memory</span>
+                {isSpeaking&&<button onClick={stopSpeaking} style={{background:'none',border:`1px solid ${C.muted}`,borderRadius:4,padding:'1px 7px',color:C.muted,cursor:'pointer',fontSize:9}}>â– </button>}
               </div>
             </div>
 
@@ -1512,7 +1512,7 @@ STYLE: ${toneGuide} Under 80 words unless detail requested. No "Certainly!" ever
         </main>
       </div>
 
-      {/* ── CHAT BAR ── */}
+      {/* â”€â”€ CHAT BAR â”€â”€ */}
       <div style={{position:'fixed',bottom:0,left:56,right:0,zIndex:20,background:'rgba(2,12,27,0.97)',borderTop:`1px solid ${C.border}`,backdropFilter:'blur(12px)'}}>
         {/* Messages (collapsed/expanded) */}
         {chatOpen&&displayMsgs.length>0&&(
@@ -1522,7 +1522,7 @@ STYLE: ${toneGuide} Under 80 words unless detail requested. No "Certainly!" ever
                 <div key={m.id||i} style={{margin:'2px 0 5px',padding:'4px 10px',borderRadius:5,background:`${C.gold}08`,border:`1px solid ${C.gold}18`,fontSize:11,color:C.gold,fontFamily:'JetBrains Mono,monospace'}}>{m.content}</div>
               )
               if(m.role==='system')return(
-                <div key={m.id||i} style={{margin:'2px 0 5px',padding:'4px 10px',borderRadius:5,background:`${C.purple}08`,border:`1px solid ${C.purple}18`,fontSize:11,color:C.purple}}>⚙ {m.content}</div>
+                <div key={m.id||i} style={{margin:'2px 0 5px',padding:'4px 10px',borderRadius:5,background:`${C.purple}08`,border:`1px solid ${C.purple}18`,fontSize:11,color:C.purple}}>âš™ {m.content}</div>
               )
               return(
                 <div key={m.id||i} style={{marginBottom:8,display:'flex',flexDirection:m.role==='user'?'row-reverse':'row',gap:6}}>
@@ -1535,7 +1535,7 @@ STYLE: ${toneGuide} Under 80 words unless detail requested. No "Certainly!" ever
               <div style={{display:'flex',gap:6,marginBottom:8}}>
                 <div style={{width:20,height:20,borderRadius:'50%',background:`${C.primary}15`,border:`1px solid ${C.primary}33`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:7,color:C.primary,fontFamily:'Orbitron,monospace'}}>F</div>
                 <div style={{padding:'7px 10px',background:C.card,border:`1px solid ${C.dim}`,borderRadius:8}}>
-                  <span className="blink" style={{color:C.muted,fontSize:12}}>◌ {loadingLabel}</span>
+                  <span className="blink" style={{color:C.muted,fontSize:12}}>â—Œ {loadingLabel}</span>
                 </div>
               </div>
             )}
@@ -1543,7 +1543,7 @@ STYLE: ${toneGuide} Under 80 words unless detail requested. No "Certainly!" ever
           </div>
         )}
 
-        {/* Suggested prompts — only when chat empty */}
+        {/* Suggested prompts â€” only when chat empty */}
         {!chatOpen&&(
           <div style={{padding:'8px 16px',display:'flex',gap:8,overflowX:'auto'}}>
             {SUGGESTED.map(p=>(
@@ -1559,8 +1559,8 @@ STYLE: ${toneGuide} Under 80 words unless detail requested. No "Certainly!" ever
         {/* Listening indicator banner */}
         {isListening&&(
           <div style={{padding:'6px 14px',background:`${C.danger}12`,borderTop:`1px solid ${C.danger}33`,display:'flex',alignItems:'center',gap:8}}>
-            <span className="blink" style={{color:C.danger,fontSize:10}}>●</span>
-            <span style={{fontSize:11,color:C.danger,fontFamily:'Orbitron,monospace',letterSpacing:2}}>LISTENING — SPEAK NOW</span>
+            <span className="blink" style={{color:C.danger,fontSize:10}}>â—</span>
+            <span style={{fontSize:11,color:C.danger,fontFamily:'Orbitron,monospace',letterSpacing:2}}>LISTENING â€” SPEAK NOW</span>
             <span style={{fontSize:11,color:C.muted,marginLeft:4}}>Friday will respond automatically when you stop speaking</span>
             <button onClick={()=>{recognitionRef.current?.abort();setIsListening(false)}}
               style={{marginLeft:'auto',background:'none',border:`1px solid ${C.danger}55`,borderRadius:4,padding:'2px 8px',color:C.danger,cursor:'pointer',fontSize:10}}>Cancel</button>
@@ -1571,12 +1571,12 @@ STYLE: ${toneGuide} Under 80 words unless detail requested. No "Certainly!" ever
         <div style={{padding:'8px 12px',display:'flex',gap:7,alignItems:'center'}}>
           <button onClick={()=>setChatOpen(o=>!o)}
             style={{width:32,height:32,borderRadius:6,flexShrink:0,border:`1px solid ${chatOpen?C.primary:C.dim}`,background:chatOpen?`${C.primary}12`:'transparent',color:chatOpen?C.primary:C.muted,fontSize:11,cursor:'pointer',fontFamily:'Orbitron,monospace',transition:'all 0.2s'}}>
-            {chatOpen?'▼':'▲'}
+            {chatOpen?'â–¼':'â–²'}
           </button>
 
-          {/* Mic button — clearly shows state, auto-sends on recognition */}
+          {/* Mic button â€” clearly shows state, auto-sends on recognition */}
           <button onClick={()=>startListening(true)}
-            title={isListening?'Listening... (click to cancel)':'Click and speak — Friday responds automatically (Chrome/Edge only)'}
+            title={isListening?'Listening... (click to cancel)':'Click and speak â€” Friday responds automatically (Chrome/Edge only)'}
             style={{width:32,height:32,borderRadius:6,flexShrink:0,
               border:`1px solid ${isListening?C.danger:C.border}`,
               background:isListening?`${C.danger}18`:`${C.primary}08`,
@@ -1585,17 +1585,17 @@ STYLE: ${toneGuide} Under 80 words unless detail requested. No "Certainly!" ever
               transition:'all 0.2s',
               boxShadow:isListening?`0 0 14px ${C.danger}66`:'none',
               animation:isListening?'pulse-glow 0.8s ease-in-out infinite':'none'}}>
-            🎙
+            ðŸŽ™
           </button>
 
           <textarea id="fri-input" value={chatInput} onChange={e=>setChatInput(e.target.value)} onKeyDown={onKD}
-            placeholder={isListening?'Listening... speak now':'Type or click 🎙 to speak (Chrome/Edge only)'}
+            placeholder={isListening?'Listening... speak now':'Type or click ðŸŽ™ to speak (Chrome/Edge only)'}
             rows={1} style={{flex:1,background:'transparent',border:`1px solid ${isListening?C.danger:C.border}`,borderRadius:6,padding:'6px 10px',color:C.text,fontSize:13,outline:'none',resize:'none',fontFamily:'Rajdhani,sans-serif',lineHeight:1.5,maxHeight:60,transition:'border-color 0.2s'}}
             onFocus={e=>{e.target.style.borderColor=C.primary;setChatOpen(true)}} onBlur={e=>{if(!isListening)e.target.style.borderColor=C.border}}/>
 
           <button onClick={sendMessage}
             style={{width:32,height:32,borderRadius:6,flexShrink:0,border:`1px solid ${C.primary}`,background:`${C.primary}12`,color:C.primary,fontSize:13,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',transition:'all 0.2s'}}
-            onMouseEnter={e=>e.currentTarget.style.background=`${C.primary}25`} onMouseLeave={e=>e.currentTarget.style.background=`${C.primary}12`}>▶</button>
+            onMouseEnter={e=>e.currentTarget.style.background=`${C.primary}25`} onMouseLeave={e=>e.currentTarget.style.background=`${C.primary}12`}>â–¶</button>
         </div>
       </div>
 
@@ -1604,12 +1604,12 @@ STYLE: ${toneGuide} Under 80 words unless detail requested. No "Certainly!" ever
         <div style={{position:'fixed',inset:0,background:'rgba(2,12,27,0.95)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:100,backdropFilter:'blur(12px)'}}>
           <div style={{background:C.card,border:`1px solid ${C.primary}`,borderRadius:14,padding:36,maxWidth:440,width:'90%',boxShadow:`0 0 80px ${C.glow}`}}>
             <div style={{fontFamily:'Orbitron,monospace',fontSize:17,color:C.primary,marginBottom:6,letterSpacing:2}}>FRIDAY v4</div>
-            <p style={{color:C.muted,fontSize:13,lineHeight:1.7,marginBottom:16}}>Enter your Anthropic API key to activate Friday. Stored locally — sent only to Anthropic and your connected Google Calendar.</p>
+            <p style={{color:C.muted,fontSize:13,lineHeight:1.7,marginBottom:16}}>Enter your Anthropic API key to activate Friday. Stored locally â€” sent only to Anthropic and your connected Google Calendar.</p>
             <div style={{marginBottom:14}}>
               <Label>Anthropic API Key</Label>
               <Inp type="password" value={tempKey} onChange={e=>setTempKey(e.target.value)} placeholder="sk-ant-..." style={{fontFamily:'JetBrains Mono,monospace'}}/>
             </div>
-            <p style={{fontSize:10,color:C.muted,marginBottom:18}}>Get yours at <a href="https://console.anthropic.com" target="_blank" rel="noopener noreferrer" style={{color:C.primary}}>console.anthropic.com</a> · Claude Sonnet 4</p>
+            <p style={{fontSize:10,color:C.muted,marginBottom:18}}>Get yours at <a href="https://console.anthropic.com" target="_blank" rel="noopener noreferrer" style={{color:C.primary}}>console.anthropic.com</a> Â· Claude Sonnet 4</p>
             <div style={{display:'flex',gap:8}}>
               <Btn onClick={saveKey} color={C.primary} style={{flex:1,padding:'11px',fontSize:13}}>ACTIVATE</Btn>
               {apiKey&&<Btn onClick={()=>setShowSetup(false)} color={C.muted} outline style={{padding:'11px 16px'}}>Cancel</Btn>}
@@ -1620,3 +1620,4 @@ STYLE: ${toneGuide} Under 80 words unless detail requested. No "Certainly!" ever
     </>
   )
 }
+
