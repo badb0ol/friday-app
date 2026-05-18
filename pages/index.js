@@ -3,12 +3,22 @@ import Head from 'next/head'
 import { useState, useEffect, useRef, useCallback } from 'react'
 
 const C = {
-  bg:'#020c1b', surface:'#04101e', card:'#071624', card2:'#0c1f32',
-  primary:'#00d4ff', gold:'#ffb700', success:'#00e5a0', danger:'#ff3d5a',
-  purple:'#a78bfa', teal:'#2dd4bf', secondary:'#ff6b35',
-  text:'#b8d4ee', muted:'#3a6080', dim:'#142030',
-  border:'rgba(0,212,255,0.1)', glow:'rgba(0,212,255,0.15)',
+  bg:'oklch(0.155 0.008 60)', surface:'oklch(0.19 0.008 60)',
+  card:'oklch(0.22 0.010 60)', card2:'oklch(0.25 0.012 60)',
+  primary:'oklch(0.80 0.13 75)',   // amber accent
+  gold:'oklch(0.80 0.13 75)',
+  success:'oklch(0.72 0.07 165)',  // sage
+  danger:'oklch(0.62 0.18 25)',
+  purple:'oklch(0.72 0.10 295)',
+  teal:'oklch(0.72 0.07 165)',
+  secondary:'oklch(0.75 0.12 50)',
+  text:'oklch(0.95 0.018 80)', muted:'oklch(0.70 0.012 70)',
+  dim:'oklch(0.50 0.012 70)',
+  border:'oklch(0.30 0.010 65 / 0.9)', glow:'oklch(0.80 0.13 75 / 0.15)',
 }
+const SERIF = '"Instrument Serif","Cormorant Garamond",Georgia,serif'
+const SANS  = '"Inter Tight","Inter",-apple-system,system-ui,sans-serif'
+const MONO  = '"IBM Plex Mono","JetBrains Mono",ui-monospace,monospace'
 const catColor = c => ({ cycling:C.primary, health:C.success, productivity:C.gold, finance:C.secondary, learning:C.purple, custom:C.muted }[c] || C.muted)
 
 const NAV = [
@@ -106,7 +116,7 @@ const toolLabel = (n,i) => ({
 
 // â”€â”€â”€ MINIMAL UI ATOMS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const Hdg = ({children,color=C.primary,mb=14}) => (
-  <div style={{fontFamily:'Orbitron,monospace',fontSize:9,letterSpacing:3,color,textTransform:'uppercase',marginBottom:mb,opacity:0.8}}>{children}</div>
+  <div style={{fontFamily:MONO,fontSize:10,letterSpacing:'0.18em',color,textTransform:'uppercase',marginBottom:mb,opacity:0.8}}>{children}</div>
 )
 const Prog = ({value,color=C.primary,h=4}) => (
   <div className="progress-track" style={{height:h}}>
@@ -114,7 +124,7 @@ const Prog = ({value,color=C.primary,h=4}) => (
   </div>
 )
 const Badge = ({label,color=C.primary}) => (
-  <span style={{fontSize:9,padding:'2px 6px',borderRadius:3,border:`1px solid ${color}44`,background:`${color}0f`,color,letterSpacing:1,fontFamily:'Orbitron,monospace'}}>{label}</span>
+  <span style={{fontSize:9,padding:'2px 6px',borderRadius:3,border:`1px solid ${color}44`,background:`${color}0f`,color,letterSpacing:1,fontFamily:MONO}}>{label}</span>
 )
 const Inp = ({value,onChange,placeholder,type='text',style={}}) => (
   <input type={type} value={value} onChange={onChange} placeholder={placeholder}
@@ -134,7 +144,7 @@ const Btn = ({children,onClick,color=C.primary,outline=false,small=false,style={
   </button>
 )
 const Row = ({children,mb=10}) => <div style={{marginBottom:mb}}>{children}</div>
-const Label = ({children}) => <div style={{fontSize:10,color:C.muted,marginBottom:4,letterSpacing:1}}>{children.toUpperCase()}</div>
+const Label = ({children}) => <div style={{fontFamily:MONO+',monospace',fontSize:9,letterSpacing:'0.22em',textTransform:'uppercase',color:C.dim,marginBottom:4,letterSpacing:1}}>{children.toUpperCase()}</div>
 
 // â”€â”€â”€ GPX MAP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function GPXMap({points}) {
@@ -161,133 +171,88 @@ function GPXMap({points}) {
 }
 
 // â”€â”€â”€ FRIDAY ORB â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-function FridayOrb({isSpeaking, isLoading, isListening, orbSize=320, waveH}) {
-  const state = isListening ? 'listen' : isLoading ? 'think' : isSpeaking ? 'speak' : 'idle'
-  const anim = state==='speak' ? 'orb-speak 0.35s ease-in-out infinite' : state==='think' ? 'orb-think 0.8s ease-in-out infinite' : state==='listen' ? 'orb-think 0.5s ease-in-out infinite' : 'orb-idle 3s ease-in-out infinite'
-  const cx=orbSize/2, cy=orbSize/2
-  const R = [orbSize*0.49, orbSize*0.42, orbSize*0.34, orbSize*0.27, orbSize*0.2]
+// NavIcon component
+function NavIcon({id, size=18}) {
+  const p = {fill:"none",stroke:"currentColor",strokeWidth:1.5,strokeLinecap:"round",strokeLinejoin:"round"}
+  const icons = {
+    orb:      <><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="3"/></>,
+    cycling:  <><circle cx="5.5" cy="17" r="3.5"/><circle cx="18.5" cy="17" r="3.5"/><path d="M5.5 17 9 9h5l4 8"/><circle cx="12" cy="6" r="1"/></>,
+    training: <><path d="M4 20V14M9 20V10M14 20V6M19 20v-9M3 20h18"/></>,
+    body:     <><circle cx="12" cy="6" r="2.5"/><path d="M7 21v-5l2-4h6l2 4v5M9 12V9M15 12V9"/></>,
+    goals:    <><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/></>,
+    projects: <><rect x="3.5" y="3.5" width="7" height="7" rx="1"/><rect x="13.5" y="3.5" width="7" height="7" rx="1"/><rect x="3.5" y="13.5" width="7" height="7" rx="1"/><rect x="13.5" y="13.5" width="7" height="7" rx="1"/></>,
+    finance:  <><circle cx="12" cy="12" r="8.5"/><path d="M12 7v10M15 9.5c-.5-1-1.5-1.5-3-1.5s-3 .75-3 2 1.25 1.75 3 2 3 .75 3 2-1.5 2-3 2-2.5-.5-3-1.5"/></>,
+    calendar: <><rect x="3.5" y="5" width="17" height="15.5" rx="1.5"/><path d="M3.5 9.5h17M8 3.5v3.5M16 3.5v3.5"/></>,
+    learning: <><path d="M3.5 5.5h7c1 0 1.5.5 1.5 1.5v13c0-1-.5-1.5-1.5-1.5h-7ZM20.5 5.5h-7c-1 0-1.5.5-1.5 1.5v13c0-1 .5-1.5 1.5-1.5h7Z"/></>,
+    memory:   <><circle cx="7" cy="8" r="2"/><circle cx="17" cy="8" r="2"/><circle cx="12" cy="16" r="2"/><path d="M8.5 9 11 14.5M15.5 9 13 14.5M9 8h6"/></>,
+    strava:   <><path d="m6 13 4-8 4 8h-3M11 13l3 6 3-6h-2"/></>,
+    mic:      <><rect x="9" y="3.5" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3"/></>,
+    settings: <><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></>,
+    export:   <><path d="M12 3v12M7 10l5 5 5-5M20 21H4"/></>,
+    import:   <><path d="M12 21V9M7 14l5-5 5 5M20 3H4"/></>,
+  }
+  return <svg width={size} height={size} viewBox="0 0 24 24" {...p} style={{display:"block",flexShrink:0}}>{icons[id]||null}</svg>
+}
 
-  // tick marks for outer ring
-  const ticks = [...Array(48)].map((_,i) => {
-    const a=(i/48)*2*Math.PI, r1=R[0]*0.92, r2=R[0]*(i%4===0?1.04:0.98)
-    return { x1:cx+r1*Math.cos(a), y1:cy+r1*Math.sin(a), x2:cx+r2*Math.cos(a), y2:cy+r2*Math.sin(a), major:i%12===0, minor:i%4===0 }
-  })
-
+function FridayOrb({isSpeaking, isLoading, isListening, orbSize=320}) {
+  const accent = C.primary, accent2 = C.success
   return (
-    <svg viewBox={`0 0 ${orbSize} ${orbSize}`} width={orbSize} height={orbSize}
-      style={{animation:anim, overflow:'visible', flexShrink:0}}>
-      <defs>
-        <radialGradient id="cg" cx="38%" cy="32%">
-          <stop offset="0%"  stopColor={C.primary} stopOpacity="0.18"/>
-          <stop offset="55%" stopColor={C.primary} stopOpacity="0.05"/>
-          <stop offset="100%" stopColor={C.bg} stopOpacity="0"/>
-        </radialGradient>
-        <radialGradient id="ig" cx="50%" cy="50%">
-          <stop offset="0%"  stopColor={C.primary} stopOpacity="0.08"/>
-          <stop offset="100%" stopColor={C.bg} stopOpacity="0"/>
-        </radialGradient>
-        <linearGradient id="sg" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor={C.primary} stopOpacity="0"/>
-          <stop offset="100%" stopColor={C.primary} stopOpacity="0.7"/>
-        </linearGradient>
-      </defs>
-
-      {/* Outermost decorative ring â€” slow CW */}
-      <g style={{transformOrigin:`${cx}px ${cy}px`, animation:'ring-cw 45s linear infinite'}}>
-        <circle cx={cx} cy={cy} r={R[0]} fill="none" stroke={C.primary} strokeWidth="0.4" strokeDasharray="3 11" opacity="0.22"/>
-        {ticks.map((t,i)=>(
-          <line key={i} x1={t.x1} y1={t.y1} x2={t.x2} y2={t.y2}
-            stroke={C.primary} strokeWidth={t.major?1.8:t.minor?0.9:0.4}
-            opacity={t.major?0.8:t.minor?0.5:0.25}/>
-        ))}
-      </g>
-
-      {/* Second ring â€” medium CCW */}
-      <g style={{transformOrigin:`${cx}px ${cy}px`, animation:'ring-ccw 22s linear infinite'}}>
-        <circle cx={cx} cy={cy} r={R[1]} fill="none" stroke={C.primary} strokeWidth="0.7" strokeDasharray="18 22" opacity="0.18"/>
-        <circle cx={cx} cy={cy} r={R[1]+6} fill="none" stroke={C.primary} strokeWidth="0.3" strokeDasharray="4 28" opacity="0.12"/>
-      </g>
-
-      {/* Scanning arc â€” fast CW */}
-      <g style={{transformOrigin:`${cx}px ${cy}px`, animation:`ring-cw ${isLoading?'2s':'5s'} linear infinite`}}>
-        <line x1={cx} y1={cy} x2={cx} y2={cy-R[2]} stroke={C.primary} strokeWidth="0.8" opacity="0.45"/>
-        <path d={`M ${cx} ${cy-R[2]} A ${R[2]} ${R[2]} 0 0 1 ${cx+R[2]*Math.sin(Math.PI*0.55)} ${cy-R[2]*Math.cos(Math.PI*0.55)}`}
-          fill="none" stroke={C.primary} strokeWidth="1.5" opacity="0.35"/>
-        <circle cx={cx} cy={cy-R[2]} r="3.5" fill={C.primary} opacity="0.9"/>
-      </g>
-
-      {/* Core glow sphere */}
-      <circle cx={cx} cy={cy} r={R[2]} fill="url(#cg)"/>
-      <circle cx={cx} cy={cy} r={R[2]} fill="none" stroke={C.primary} strokeWidth="1.5" opacity="0.55"/>
-
-      {/* Inner rotating ring */}
-      <g style={{transformOrigin:`${cx}px ${cy}px`, animation:'ring-cw 10s linear infinite'}}>
-        <circle cx={cx} cy={cy} r={R[3]} fill="none" stroke={C.primary} strokeWidth="0.8" strokeDasharray="7 9" opacity="0.3"/>
-      </g>
-
-      {/* Innermost */}
-      <circle cx={cx} cy={cy} r={R[4]} fill="url(#ig)"/>
-      <circle cx={cx} cy={cy} r={R[4]} fill="none" stroke={C.primary} strokeWidth="0.8" opacity="0.25"/>
-
-      {/* F glyph */}
-      <text x={cx} y={cy-6} textAnchor="middle" fill={C.primary} fontFamily="Orbitron,monospace"
-        fontSize={orbSize*0.1} fontWeight="700" opacity="0.92">F</text>
-
-      {/* FRIDAY label */}
-      <text x={cx} y={cy+orbSize*0.058} textAnchor="middle" fill={C.primary} fontFamily="Orbitron,monospace"
-        fontSize={orbSize*0.031} letterSpacing="5" opacity="0.45">FRIDAY</text>
-
-      {/* Status text */}
-      <text x={cx} y={cy+orbSize*0.1} textAnchor="middle" fill={C.primary} fontFamily="Orbitron,monospace"
-        fontSize={orbSize*0.024} letterSpacing="2" opacity="0.3">
-        {isLoading?'PROCESSING':isSpeaking?'SPEAKING':isListening?'LISTENING':'READY'}
-      </text>
-
-      {/* Waveform */}
-      {(isSpeaking||isLoading) && waveH && waveH.map((h,i)=>{
-        const bw=4, gap=2, total=waveH.length*(bw+gap)-gap
-        const bx=cx-total/2+i*(bw+gap)
-        const barH=Math.max(3,h)
-        return (
-          <rect key={i} x={bx} y={cy+orbSize*0.135-barH/2} width={bw} height={barH} rx={2}
-            fill={C.primary} opacity="0.55" style={{transition:'height 0.08s, y 0.08s'}}/>
-        )
-      })}
-    </svg>
+    <div style={{position:"relative",width:orbSize,height:orbSize}}>
+      <svg viewBox="0 0 500 500" width={orbSize} height={orbSize} style={{display:"block"}}>
+        <defs>
+          <radialGradient id="vp-glow" cx="50%" cy="50%" r="50%"><stop offset="0%" stopColor={accent} stopOpacity="0.35"/><stop offset="40%" stopColor={accent2} stopOpacity="0.12"/><stop offset="100%" stopColor={accent} stopOpacity="0"/></radialGradient>
+          <linearGradient id="vp-rim" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor={accent}/><stop offset="100%" stopColor={accent2}/></linearGradient>
+          <linearGradient id="vp-rim2" x1="1" y1="0" x2="0" y2="1"><stop offset="0%" stopColor={accent2} stopOpacity="0.85"/><stop offset="100%" stopColor={accent} stopOpacity="0.45"/></linearGradient>
+          <radialGradient id="vp-core" cx="50%" cy="50%" r="50%"><stop offset="0%" stopColor="oklch(0.97 0.04 80)" stopOpacity="0.95"/><stop offset="35%" stopColor={accent} stopOpacity="0.7"/><stop offset="100%" stopColor={accent2} stopOpacity="0"/></radialGradient>
+        </defs>
+        <circle cx="250" cy="250" r="240" fill="url(#vp-glow)"/>
+        <g style={{animation:`vp-rotate ${isLoading?"8s":"40s"} linear infinite`,transformOrigin:"250px 250px"}}>
+          <ellipse cx="250" cy="250" rx="195" ry="195" fill="none" stroke="url(#vp-rim)" strokeWidth="0.8" opacity="0.55"/>
+        </g>
+        <g style={{animation:"vp-rotate 80s linear infinite reverse",transformOrigin:"250px 250px"}}>
+          {[150,110,60,0,-60,-110,-150].map((dy,i)=>{const ry=160*Math.sqrt(Math.max(0,1-Math.pow(dy/160,2)));return <ellipse key={i} cx="250" cy={250+dy*0.55} rx="160" ry={ry*0.18} fill="none" stroke="url(#vp-rim)" strokeOpacity={dy===0?0.65:0.32} strokeWidth={dy===0?1:0.6}/>})}
+        </g>
+        <g style={{animation:"vp-rotate 32s linear infinite",transformOrigin:"250px 250px"}}>
+          {[0,30,60,90,120,150].map((deg,i)=>(<ellipse key={i} cx="250" cy="250" rx={160*Math.abs(Math.cos(deg*Math.PI/180))} ry="160" fill="none" stroke="url(#vp-rim2)" strokeOpacity={deg===0||deg===90?0.5:0.22} strokeWidth="0.55"/>))}
+        </g>
+        <g style={{animation:`vp-rotate ${isListening?"6s":isSpeaking?"8s":"18s"} linear infinite`,transformOrigin:"250px 250px"}}>
+          {[0,60,120,180,240,300].map((deg,i)=>{const a=deg*Math.PI/180;return <circle key={i} cx={250+Math.cos(a)*195} cy={250+Math.sin(a)*195*0.55} r={i===0?3.5:1.8} fill={i%2?accent2:accent} opacity="0.85"/>})}
+        </g>
+        <circle cx="250" cy="250" r="38" fill="url(#vp-core)" style={{animation:"vp-pulse 4s ease-in-out infinite",transformOrigin:"250px 250px"}}/>
+        <path d="M 220 215 A 38 38 0 0 1 280 235" stroke="oklch(0.96 0.06 80)" strokeOpacity="0.75" strokeWidth="1.4" fill="none"/>
+      </svg>
+    </div>
   )
 }
+
 
 // â”€â”€â”€ DATA BADGE (floats around orb) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-function DataBadge({label, value, unit, color=C.primary, angle, distance, delay=0}) {
-  const x = Math.sin(angle*Math.PI/180)*distance
-  const y = -Math.cos(angle*Math.PI/180)*distance
+function OrbCaption({label, value, style={}}) {
   return (
-    <div style={{position:'absolute',left:'50%',top:'50%',
-      transform:`translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`,
-      textAlign:'center', pointerEvents:'none', zIndex:10}}>
-      <div style={{animation:`badge-float 4s ease-in-out infinite`,animationDelay:`${delay}s`}}>
-        <div style={{fontSize:8,color:C.muted,fontFamily:'Orbitron,monospace',letterSpacing:2,marginBottom:2}}>{label}</div>
-        <div style={{fontFamily:'Orbitron,monospace',fontSize:16,color,lineHeight:1,textShadow:`0 0 12px ${color}88`}}>{value}</div>
-        {unit&&<div style={{fontSize:8,color:C.muted,marginTop:1}}>{unit}</div>}
-        <div style={{width:32,height:1,background:`linear-gradient(90deg,transparent,${color},transparent)`,margin:'4px auto 0'}}/>
-      </div>
+    <div style={{position:"absolute",maxWidth:160,pointerEvents:"none",...style}}>
+      <div style={{fontFamily:MONO,fontSize:10,color:C.dim,letterSpacing:"0.16em",textTransform:"uppercase",marginBottom:6}}>{label}</div>
+      <div style={{fontFamily:SERIF,fontSize:24,color:C.text,fontWeight:400,lineHeight:1,letterSpacing:"-0.01em"}}>{value}</div>
     </div>
   )
 }
 
+
 // â”€â”€â”€ PANEL WRAPPER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-function Panel({children, title, onClose}) {
+function Panel({children, title, eyebrow, onClose}) {
   return (
-    <div className="panel-in" style={{width:400,minWidth:400,height:'100%',background:'rgba(4,16,30,0.97)',borderLeft:`1px solid ${C.border}`,display:'flex',flexDirection:'column',overflow:'hidden'}}>
-      <div style={{padding:'14px 18px',borderBottom:`1px solid ${C.border}`,display:'flex',justifyContent:'space-between',alignItems:'center',flexShrink:0}}>
-        <div style={{fontFamily:'Orbitron,monospace',fontSize:10,color:C.primary,letterSpacing:3}}>{title}</div>
-        <button onClick={onClose} style={{background:'none',border:'none',color:C.muted,cursor:'pointer',fontSize:16,lineHeight:1}}
-          onMouseEnter={e=>e.target.style.color=C.text} onMouseLeave={e=>e.target.style.color=C.muted}>âœ•</button>
+    <div className="panel-in" style={{width:490,minWidth:490,height:"100%",background:C.surface,borderLeft:`1px solid ${C.border}`,display:"flex",flexDirection:"column",overflow:"hidden"}}>
+      <div style={{padding:"32px 36px 22px",position:"relative",flexShrink:0}}>
+        <button onClick={onClose} style={{position:"absolute",top:22,right:22,background:"transparent",border:0,cursor:"pointer",color:C.muted,padding:4,lineHeight:1,display:"flex"}} onMouseEnter={e=>e.currentTarget.style.color=C.text} onMouseLeave={e=>e.currentTarget.style.color=C.muted}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><path d="m6 6 12 12M18 6 6 18"/></svg>
+        </button>
+        {eyebrow&&<div style={{fontFamily:MONO,fontSize:10,color:C.success,letterSpacing:"0.22em",textTransform:"uppercase",marginBottom:12}}>{eyebrow}</div>}
+        <div style={{fontFamily:SERIF,fontSize:36,color:C.text,lineHeight:1,letterSpacing:"-0.015em"}}>{title}</div>
       </div>
-      <div style={{flex:1,overflowY:'auto',padding:'16px 18px'}}>{children}</div>
+      <div style={{flex:1,overflowY:"auto",padding:"4px 36px 32px"}}>{children}</div>
     </div>
   )
 }
+
 
 // â”€â”€â”€ CYCLING PANEL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function CyclingPanel({rides, setRides}) {
@@ -311,9 +276,9 @@ function CyclingPanel({rides, setRides}) {
       <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10,marginBottom:16}}>
         {[{l:'This Week',v:wk,u:'km',sub:trendStr,c:C.primary},{l:'Streak',v:streak,u:'days',sub:streak>=3?'ðŸ”¥':'Ride today',c:streak>=3?C.success:C.gold},{l:'Best Ride',v:best,u:'km',c:C.secondary},{l:'Avg Speed',v:avgSpd(rides),u:'kph',c:C.gold}].map((s,i)=>(
           <div key={i} style={{background:C.card,border:`1px solid ${C.border}`,borderRadius:8,padding:'12px 14px'}}>
-            <div style={{fontSize:9,color:C.muted,fontFamily:'Orbitron,monospace',letterSpacing:2,marginBottom:6}}>{s.l}</div>
-            <div style={{fontFamily:'Orbitron,monospace',fontSize:20,color:s.c}}>{s.v}<span style={{fontSize:11,color:C.muted}}> {s.u}</span></div>
-            {s.sub&&<div style={{fontSize:10,color:C.muted,marginTop:3}}>{s.sub}</div>}
+            <div style={{fontSize:9,color:C.muted,fontFamily:MONO,letterSpacing:2,marginBottom:6}}>{s.l}</div>
+            <div style={{fontFamily:MONO,fontSize:20,color:s.c}}>{s.v}<span style={{fontSize:11,color:C.muted}}> {s.u}</span></div>
+            {s.sub&&<div style={{fontFamily:MONO+',monospace',fontSize:9,letterSpacing:'0.22em',textTransform:'uppercase',color:C.dim,marginTop:3}}>{s.sub}</div>}
           </div>
         ))}
       </div>
@@ -335,7 +300,7 @@ function CyclingPanel({rides, setRides}) {
       <div style={{marginBottom:16}}>
         <div style={{display:'flex',justifyContent:'space-between',marginBottom:5}}>
           <span style={{fontSize:11,color:C.muted}}>Weekly target Â· 120 km</span>
-          <span style={{fontFamily:'Orbitron,monospace',fontSize:11,color:wk>=120?C.success:C.primary}}>{wk} km</span>
+          <span style={{fontFamily:MONO,fontSize:11,color:wk>=120?C.success:C.primary}}>{wk} km</span>
         </div>
         <Prog value={Math.min(100,(wk/120)*100)} color={wk>=120?C.success:C.primary} h={6}/>
       </div>
@@ -346,7 +311,7 @@ function CyclingPanel({rides, setRides}) {
           <Hdg color={C.teal} mb={10}>GPX Â· {gpxData.name}</Hdg>
           <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:8,marginBottom:12}}>
             {[{l:'Dist',v:gpxData.distance,u:'km'},{l:'Speed',v:gpxData.avgSpeed,u:'kph'},{l:'Elev',v:`+${gpxData.elevGain}`,u:'m'},{l:'Time',v:`${Math.floor(gpxData.durationMin/60)}h${gpxData.durationMin%60}m`,u:''}].map((s,i)=>(
-              <div key={i} style={{textAlign:'center'}}><div style={{fontSize:8,color:C.muted,marginBottom:3}}>{s.l}</div><div style={{fontFamily:'Orbitron,monospace',fontSize:14,color:C.teal}}>{s.v}<span style={{fontSize:9,color:C.muted}}>{s.u}</span></div></div>
+              <div key={i} style={{textAlign:'center'}}><div style={{fontSize:8,color:C.muted,marginBottom:3}}>{s.l}</div><div style={{fontFamily:MONO,fontSize:14,color:C.teal}}>{s.v}<span style={{fontSize:9,color:C.muted}}>{s.u}</span></div></div>
             ))}
           </div>
           <GPXMap points={gpxData.points}/>
@@ -381,8 +346,8 @@ function CyclingPanel({rides, setRides}) {
       {rides.slice(0,20).map(r=>(
         <div key={r.id} style={{display:'flex',alignItems:'center',gap:10,padding:'8px 0',borderBottom:`1px solid ${C.dim}`,fontSize:13}}>
           <span style={{color:C.muted,fontSize:10,width:55}}>{fmt(r.date)}</span>
-          <span style={{fontFamily:'Orbitron,monospace',color:C.primary,fontSize:12}}>{r.km}<span style={{fontSize:9,color:C.muted}}> km</span></span>
-          <span style={{fontFamily:'Orbitron,monospace',color:C.gold,fontSize:12}}>{r.avgSpeed}<span style={{fontSize:9,color:C.muted}}> kph</span></span>
+          <span style={{fontFamily:MONO,color:C.primary,fontSize:12}}>{r.km}<span style={{fontSize:9,color:C.muted}}> km</span></span>
+          <span style={{fontFamily:MONO,color:C.gold,fontSize:12}}>{r.avgSpeed}<span style={{fontSize:9,color:C.muted}}> kph</span></span>
           <span style={{flex:1,color:C.muted,fontSize:11,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{r.duration||''}{r.notes?' Â· '+r.notes:''}</span>
           <button onClick={()=>setRides(p=>p.filter(x=>x.id!==r.id))} style={{background:'none',border:'none',color:C.dim,cursor:'pointer',fontSize:11}}
             onMouseEnter={e=>e.target.style.color=C.danger} onMouseLeave={e=>e.target.style.color=C.dim}>âœ•</button>
@@ -409,8 +374,8 @@ function TrainingPanel({rides, trainingPlan, setTrainingPlan}) {
       <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:10,marginBottom:16}}>
         {[{l:'CTL',v:ctl,sub:'Fitness',c:C.primary},{l:'ATL',v:atl,sub:'Fatigue',c:C.danger},{l:'TSB',v:tsb,sub:status.l,c:status.c}].map((s,i)=>(
           <div key={i} style={{background:C.card,border:`1px solid ${C.border}`,borderRadius:8,padding:'12px',textAlign:'center'}}>
-            <div style={{fontSize:9,color:C.muted,fontFamily:'Orbitron,monospace',letterSpacing:2,marginBottom:6}}>{s.l}</div>
-            <div style={{fontFamily:'Orbitron,monospace',fontSize:24,color:s.c}}>{s.v}</div>
+            <div style={{fontSize:9,color:C.muted,fontFamily:MONO,letterSpacing:2,marginBottom:6}}>{s.l}</div>
+            <div style={{fontFamily:MONO,fontSize:24,color:s.c}}>{s.v}</div>
             <div style={{fontSize:10,color:s.c,marginTop:3}}>{s.sub}</div>
           </div>
         ))}
@@ -434,11 +399,11 @@ function TrainingPanel({rides, trainingPlan, setTrainingPlan}) {
             const isT=d.date===today(),tc=typeColor[d.type]||C.muted
             return(
               <div key={i} style={{background:isT?`${tc}12`:C.card,border:`1px solid ${isT?tc:C.dim}`,borderRadius:8,padding:'10px 12px'}}>
-                <div style={{fontSize:9,color:C.muted,fontFamily:'Orbitron,monospace',marginBottom:4}}>{d.day_name||fmt(d.date)}</div>
+                <div style={{fontSize:9,color:C.muted,fontFamily:MONO,marginBottom:4}}>{d.day_name||fmt(d.date)}</div>
                 <div style={{fontSize:14,marginBottom:3}}>{typeIcon[d.type]||'â—ˆ'}</div>
                 <div style={{fontSize:11,color:tc,fontWeight:600,textTransform:'capitalize',marginBottom:3}}>{d.type}{d.km>0?` Â· ${d.km}km`:''}</div>
                 <div style={{fontSize:11,color:C.text,lineHeight:1.4}}>{d.description}</div>
-                {isT&&<div style={{fontSize:8,color:tc,fontFamily:'Orbitron,monospace',marginTop:5,letterSpacing:1}}>TODAY â—ˆ</div>}
+                {isT&&<div style={{fontSize:8,color:tc,fontFamily:MONO,marginTop:5,letterSpacing:1}}>TODAY â—ˆ</div>}
               </div>
             )
           })}
@@ -507,14 +472,14 @@ function BodyPanel({bodyMetrics, setBodyMetrics, rides}) {
         {!weights.length?<div style={{color:C.muted,fontSize:12}}>Tell Friday &quot;I weigh 87.5kg today&quot;</div>:(
           <>
             <div style={{display:'flex',justifyContent:'space-between',marginBottom:8}}>
-              <span style={{fontFamily:'Orbitron,monospace',fontSize:22,color:C.teal}}>{latestW.value}<span style={{fontSize:11,color:C.muted}}> kg</span></span>
-              {wDelta!==null&&<span style={{color:wDelta<0?C.success:C.danger,fontFamily:'Orbitron,monospace',fontSize:14,alignSelf:'flex-end'}}>{wDelta>0?'+':''}{wDelta} kg</span>}
+              <span style={{fontFamily:MONO,fontSize:22,color:C.teal}}>{latestW.value}<span style={{fontSize:11,color:C.muted}}> kg</span></span>
+              {wDelta!==null&&<span style={{color:wDelta<0?C.success:C.danger,fontFamily:MONO,fontSize:14,alignSelf:'flex-end'}}>{wDelta>0?'+':''}{wDelta} kg</span>}
             </div>
             <div style={{display:'flex',alignItems:'flex-end',gap:2,height:40,marginBottom:8}}>
               {weights.slice(-20).map((m,i)=>{const h=Math.max(3,((m.value-minW+0.5)/(wRange+0.5))*36);return<div key={m.id} style={{flex:1,height:`${h}px`,background:`linear-gradient(180deg,${C.teal},${C.teal}44)`,borderRadius:2}}/>})}
             </div>
             <Prog value={pct(latestW.value,82,true)} color={C.teal} h={4}/>
-            <div style={{display:'flex',justifyContent:'space-between',fontSize:10,color:C.muted,marginTop:4}}><span>Target: 82 kg</span><span>{(latestW.value-82).toFixed(1)} kg to go</span></div>
+            <div style={{display:'flex',justifyContent:'space-between',fontFamily:MONO+',monospace',fontSize:9,letterSpacing:'0.22em',textTransform:'uppercase',color:C.dim,marginTop:4}}><span>Target: 82 kg</span><span>{(latestW.value-82).toFixed(1)} kg to go</span></div>
           </>
         )}
       </div>
@@ -525,7 +490,7 @@ function BodyPanel({bodyMetrics, setBodyMetrics, rides}) {
         {!sleeps.length?<div style={{color:C.muted,fontSize:12}}>Tell Friday &quot;I slept 7.5 hours&quot;</div>:(
           <>
             <div style={{display:'flex',justifyContent:'space-between',marginBottom:8}}>
-              <span style={{fontFamily:'Orbitron,monospace',fontSize:22,color:C.purple}}>{avgSl}<span style={{fontSize:11,color:C.muted}}> h avg</span></span>
+              <span style={{fontFamily:MONO,fontSize:22,color:C.purple}}>{avgSl}<span style={{fontSize:11,color:C.muted}}> h avg</span></span>
               <span style={{fontSize:11,color:avgSl>=7.5?C.success:C.gold,alignSelf:'flex-end'}}>{avgSl>=8?'Excellent':avgSl>=7.5?'Good':'Below optimal'}</span>
             </div>
             <div style={{display:'flex',alignItems:'flex-end',gap:2,height:40}}>
@@ -540,9 +505,9 @@ function BodyPanel({bodyMetrics, setBodyMetrics, rides}) {
         <div style={{background:C.card,borderRadius:8,padding:14,marginBottom:12,border:`1px solid ${C.gold}33`}}>
           <Hdg color={C.gold} mb={8}>Sleep Ã— Ride Speed</Hdg>
           <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:8,textAlign:'center'}}>
-            <div><div style={{fontSize:9,color:C.muted,marginBottom:4}}>AFTER 7.5H+</div><div style={{fontFamily:'Orbitron,monospace',fontSize:18,color:C.success}}>{corr.g}<span style={{fontSize:9,color:C.muted}}>kph</span></div></div>
-            <div><div style={{fontSize:9,color:C.muted,marginBottom:4}}>POOR SLEEP</div><div style={{fontFamily:'Orbitron,monospace',fontSize:18,color:C.danger}}>{corr.p}<span style={{fontSize:9,color:C.muted}}>kph</span></div></div>
-            <div style={{background:`${C.gold}10`,borderRadius:6}}><div style={{fontSize:9,color:C.muted,marginBottom:4}}>IMPACT</div><div style={{fontFamily:'Orbitron,monospace',fontSize:18,color:C.gold}}>+{corr.d}<span style={{fontSize:9,color:C.muted}}>kph</span></div></div>
+            <div><div style={{fontSize:9,color:C.muted,marginBottom:4}}>AFTER 7.5H+</div><div style={{fontFamily:MONO,fontSize:18,color:C.success}}>{corr.g}<span style={{fontSize:9,color:C.muted}}>kph</span></div></div>
+            <div><div style={{fontSize:9,color:C.muted,marginBottom:4}}>POOR SLEEP</div><div style={{fontFamily:MONO,fontSize:18,color:C.danger}}>{corr.p}<span style={{fontSize:9,color:C.muted}}>kph</span></div></div>
+            <div style={{background:`${C.gold}10`,borderRadius:6}}><div style={{fontSize:9,color:C.muted,marginBottom:4}}>IMPACT</div><div style={{fontFamily:MONO,fontSize:18,color:C.gold}}>+{corr.d}<span style={{fontSize:9,color:C.muted}}>kph</span></div></div>
           </div>
         </div>
       )}
@@ -588,13 +553,13 @@ function GoalsPanel({goals,setGoals}) {
             </div>
             <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:6}}>
               <div style={{display:'flex',alignItems:'center',gap:6}}>
-                <input type="number" value={g.current} onChange={e=>upd(g.id,'current',e.target.value)} style={{background:C.card2,border:`1px solid ${C.dim}`,borderRadius:5,padding:'3px 7px',color:col,width:60,fontSize:14,fontFamily:'Orbitron,monospace',outline:'none',textAlign:'center'}}/>
+                <input type="number" value={g.current} onChange={e=>upd(g.id,'current',e.target.value)} style={{background:C.card2,border:`1px solid ${C.dim}`,borderRadius:5,padding:'3px 7px',color:col,width:60,fontSize:14,fontFamily:MONO,outline:'none',textAlign:'center'}}/>
                 <span style={{color:C.muted,fontSize:12}}>/ {g.target} {g.unit}</span>
               </div>
-              <span style={{fontFamily:'Orbitron,monospace',fontSize:16,color:p>=100?C.success:col}}>{p}%</span>
+              <span style={{fontFamily:MONO,fontSize:16,color:p>=100?C.success:col}}>{p}%</span>
             </div>
             <Prog value={p} color={p>=100?C.success:col} h={5}/>
-            {p>=100&&<div style={{marginTop:6,fontSize:9,color:C.success,fontFamily:'Orbitron,monospace',letterSpacing:1}}>âœ“ ACHIEVED Â· TELL FRIDAY TO UPGRADE</div>}
+            {p>=100&&<div style={{marginTop:6,fontSize:9,color:C.success,fontFamily:MONO,letterSpacing:'0.1em'}}>âœ“ ACHIEVED Â· TELL FRIDAY TO UPGRADE</div>}
           </div>
         )
       })}
@@ -649,7 +614,7 @@ function ProjectsPanel({projects,setProjects,githubToken,setGithubToken,githubCo
             {githubCommits.slice(0,5).map(c=>(
               <div key={c.id} style={{display:'flex',gap:8,padding:'5px 0',borderBottom:`1px solid ${C.dim}`,fontSize:11}}>
                 <span style={{color:C.muted,width:50,fontSize:9}}>{fmt(c.date)}</span>
-                <span style={{color:C.success,width:65,fontFamily:'JetBrains Mono,monospace',fontSize:9,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{c.repo}</span>
+                <span style={{color:C.success,width:65,fontFamily:MONO,fontSize:9,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{c.repo}</span>
                 <span style={{flex:1,color:C.text}}>{c.message}</span>
               </div>
             ))}
@@ -705,12 +670,12 @@ function FinancePanel({transactions,setTransactions}) {
       <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:8,marginBottom:14}}>
         {[{l:'Income',v:`â‚¬${inc.toLocaleString()}`,c:C.success},{l:'Expenses',v:`â‚¬${exp.toLocaleString()}`,c:C.danger},{l:'Balance',v:`â‚¬${bal.toLocaleString()}`,c:bal>=0?C.success:C.danger}].map((s,i)=>(
           <div key={i} style={{background:C.card,borderRadius:8,padding:'10px',textAlign:'center',border:`1px solid ${C.border}`}}>
-            <div style={{fontSize:9,color:C.muted,fontFamily:'Orbitron,monospace',letterSpacing:2,marginBottom:5}}>{s.l}</div>
-            <div style={{fontFamily:'Orbitron,monospace',fontSize:16,color:s.c}}>{s.v}</div>
+            <div style={{fontSize:9,color:C.muted,fontFamily:MONO,letterSpacing:2,marginBottom:5}}>{s.l}</div>
+            <div style={{fontFamily:MONO,fontSize:16,color:s.c}}>{s.v}</div>
           </div>
         ))}
       </div>
-      {topCats.length>0&&<div style={{background:C.card,borderRadius:8,padding:12,marginBottom:12,border:`1px solid ${C.border}`}}>{topCats.map(([cat,amt])=>(<div key={cat} style={{marginBottom:8}}><div style={{display:'flex',justifyContent:'space-between',fontSize:12,marginBottom:3}}><span style={{color:C.text}}>{cat}</span><span style={{color:C.muted,fontFamily:'JetBrains Mono,monospace'}}>â‚¬{amt}</span></div><Prog value={Math.min(100,(amt/exp)*100)} color={C.secondary} h={3}/></div>))}</div>}
+      {topCats.length>0&&<div style={{background:C.card,borderRadius:8,padding:12,marginBottom:12,border:`1px solid ${C.border}`}}>{topCats.map(([cat,amt])=>(<div key={cat} style={{marginBottom:8}}><div style={{display:'flex',justifyContent:'space-between',fontSize:12,marginBottom:3}}><span style={{color:C.text}}>{cat}</span><span style={{color:C.muted,fontFamily:MONO}}>â‚¬{amt}</span></div><Prog value={Math.min(100,(amt/exp)*100)} color={C.secondary} h={3}/></div>))}</div>}
       <div style={{marginBottom:10}}><Btn onClick={()=>setAdding(a=>!a)} color={C.success} small>{adding?'âœ•':'+ Transaction'}</Btn></div>
       {adding&&(
         <div style={{background:C.card,borderRadius:8,padding:14,marginBottom:12,border:`1px solid ${C.success}44`}}>
@@ -731,7 +696,7 @@ function FinancePanel({transactions,setTransactions}) {
           <span style={{color:C.muted,fontSize:10,width:50}}>{fmt(t.date)}</span>
           <span style={{flex:1,color:C.text}}>{t.description}</span>
           <span style={{color:C.muted,fontSize:10}}>{t.category}</span>
-          <span style={{color:t.type==='income'?C.success:C.danger,fontFamily:'JetBrains Mono,monospace'}}>{t.type==='income'?'+':'-'}â‚¬{t.amount}</span>
+          <span style={{color:t.type==='income'?C.success:C.danger,fontFamily:MONO}}>{t.type==='income'?'+':'-'}â‚¬{t.amount}</span>
           <button onClick={()=>setTransactions(p=>p.filter(x=>x.id!==t.id))} style={{background:'none',border:'none',color:C.dim,cursor:'pointer',fontSize:10}} onMouseEnter={e=>e.target.style.color=C.danger} onMouseLeave={e=>e.target.style.color=C.dim}>âœ•</button>
         </div>
       ))}
@@ -774,9 +739,9 @@ function CalendarPanel({trainingPlan,rides}) {
             const tc=typeColor[d.type]||C.muted
             return(
               <div key={i} style={{display:'flex',gap:10,padding:'8px 0',borderBottom:`1px solid ${C.dim}`,alignItems:'center'}}>
-                <span style={{fontSize:10,color:C.muted,fontFamily:'Orbitron,monospace',width:65}}>{d.day_name||fmt(d.date)}</span>
-                <span style={{fontSize:10,color:tc,fontFamily:'Orbitron,monospace',width:70,textTransform:'uppercase'}}>{d.type}</span>
-                {d.km>0&&<span style={{fontSize:10,color:C.muted,width:40}}>{d.km}km</span>}
+                <span style={{fontFamily:MONO+',monospace',fontSize:9,letterSpacing:'0.22em',textTransform:'uppercase',color:C.dim,fontFamily:MONO,width:65}}>{d.day_name||fmt(d.date)}</span>
+                <span style={{fontSize:10,color:tc,fontFamily:MONO,width:70,textTransform:'uppercase'}}>{d.type}</span>
+                {d.km>0&&<span style={{fontFamily:MONO+',monospace',fontSize:9,letterSpacing:'0.22em',textTransform:'uppercase',color:C.dim,width:40}}>{d.km}km</span>}
                 <span style={{flex:1,fontSize:11,color:C.text}}>{d.description}</span>
                 {isT&&<Badge label="TODAY" color={tc}/>}
               </div>
@@ -859,7 +824,7 @@ function StravaPanel({rides,setRides}) {
       {/* Status */}
       <div style={{background:token?`${C.success}12`:C.card,border:`1px solid ${token?C.success:C.border}`,borderRadius:8,padding:'12px 14px',marginBottom:16,display:'flex',justifyContent:'space-between',alignItems:'center'}}>
         <div>
-          <div style={{fontFamily:'Orbitron,monospace',fontSize:9,letterSpacing:2,color:token?C.success:C.muted,marginBottom:2}}>{token?'CONNECTED':'NOT CONNECTED'}</div>
+          <div style={{fontFamily:MONO,fontSize:9,letterSpacing:2,color:token?C.success:C.muted,marginBottom:2}}>{token?'CONNECTED':'NOT CONNECTED'}</div>
           <div style={{fontSize:12,color:C.muted}}>{token?'Strava is linked. Sync rides below.':'Follow the steps below to link Strava.'}</div>
         </div>
         {token&&<div style={{display:'flex',flexDirection:'column',gap:6}}>
@@ -868,7 +833,7 @@ function StravaPanel({rides,setRides}) {
         </div>}
       </div>
       {syncMsg&&<div style={{background:syncMsg.startsWith('âœ“')?`${C.success}12`:`${C.danger}12`,border:`1px solid ${syncMsg.startsWith('âœ“')?C.success:C.danger}33`,borderRadius:6,padding:'8px 12px',marginBottom:12,fontSize:12,color:C.text}}>{syncMsg}</div>}
-      {synced.length>0&&<div style={{background:C.card,borderRadius:8,padding:12,marginBottom:14,border:`1px solid ${C.border}`}}><Hdg color={C.success} mb={8}>Just imported Â· {synced.length} rides</Hdg>{synced.slice(0,5).map((r,i)=><div key={i} style={{display:'flex',gap:8,padding:'5px 0',borderBottom:`1px solid ${C.dim}`,fontSize:12}}><span style={{color:C.muted,fontSize:10,width:55}}>{fmt(r.date)}</span><span style={{fontFamily:'Orbitron,monospace',color:C.primary}}>{r.km}km</span><span style={{flex:1,color:C.muted}}>{r.notes}</span></div>)}</div>}
+      {synced.length>0&&<div style={{background:C.card,borderRadius:8,padding:12,marginBottom:14,border:`1px solid ${C.border}`}}><Hdg color={C.success} mb={8}>Just imported Â· {synced.length} rides</Hdg>{synced.slice(0,5).map((r,i)=><div key={i} style={{display:'flex',gap:8,padding:'5px 0',borderBottom:`1px solid ${C.dim}`,fontSize:12}}><span style={{color:C.muted,fontSize:10,width:55}}>{fmt(r.date)}</span><span style={{fontFamily:MONO,color:C.primary}}>{r.km}km</span><span style={{flex:1,color:C.muted}}>{r.notes}</span></div>)}</div>}
 
       {/* Credentials */}
       {!token&&(
@@ -889,7 +854,7 @@ function StravaPanel({rides,setRides}) {
       <Hdg mb={10}>Setup Guide</Hdg>
       {steps.map((s,i)=>(
         <div key={i} style={{display:'flex',gap:12,marginBottom:14}}>
-          <div style={{width:22,height:22,borderRadius:'50%',border:`1px solid ${C.primary}55`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:10,color:C.primary,fontFamily:'Orbitron,monospace',flexShrink:0}}>{s.n}</div>
+          <div style={{width:22,height:22,borderRadius:'50%',border:`1px solid ${C.primary}55`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:10,color:C.primary,fontFamily:MONO,flexShrink:0}}>{s.n}</div>
           <div>
             <div style={{fontSize:13,color:C.text,fontWeight:600,marginBottom:3}}>{s.title}</div>
             <div style={{fontSize:12,color:C.muted,lineHeight:1.6}}>{s.body}</div>
@@ -930,7 +895,7 @@ function LearningPanel({learnings,setLearnings}) {
             <button onClick={()=>setLearnings(p=>p.filter(x=>x.id!==l.id))} style={{background:'none',border:'none',color:C.dim,cursor:'pointer'}} onMouseEnter={e=>e.target.style.color=C.danger} onMouseLeave={e=>e.target.style.color=C.dim}>âœ•</button>
           </div>
           <div style={{display:'flex',justifyContent:'space-between',marginBottom:5,fontSize:11,color:C.muted}}>
-            <span>Progress</span><span style={{fontFamily:'Orbitron,monospace',color:C.purple}}>{l.progress}%</span>
+            <span>Progress</span><span style={{fontFamily:MONO,color:C.purple}}>{l.progress}%</span>
           </div>
           <Prog value={l.progress} color={C.purple} h={4}/>
           <input type="range" min="0" max="100" value={l.progress} onChange={e=>setLearnings(p=>p.map(x=>x.id===l.id?{...x,progress:Number(e.target.value)}:x))} style={{width:'100%',marginTop:7,accentColor:C.purple,cursor:'pointer'}}/>
@@ -954,7 +919,7 @@ function MemoryPanel({memFacts,setMemFacts,sessions}) {
           <button onClick={()=>del(f)} style={{background:'none',border:'none',color:C.dim,cursor:'pointer',fontSize:11,flexShrink:0}} onMouseEnter={e=>e.target.style.color=C.danger} onMouseLeave={e=>e.target.style.color=C.dim}>âœ•</button>
         </div>
       ))}
-      {sessions.length>0&&(<><div style={{marginTop:16}}><Hdg color={C.purple}>Sessions Â· {sessions.length}</Hdg></div>{[...sessions].reverse().map((s,i)=>(<div key={i} style={{padding:'8px 0',borderBottom:`1px solid ${C.dim}`}}><div style={{fontSize:9,color:C.muted,fontFamily:'Orbitron,monospace',letterSpacing:1,marginBottom:3}}>{s.date}</div><div style={{fontSize:12,color:C.text,lineHeight:1.5}}>{s.summary}</div></div>))}</>)}
+      {sessions.length>0&&(<><div style={{marginTop:16}}><Hdg color={C.purple}>Sessions Â· {sessions.length}</Hdg></div>{[...sessions].reverse().map((s,i)=>(<div key={i} style={{padding:'8px 0',borderBottom:`1px solid ${C.dim}`}}><div style={{fontSize:9,color:C.muted,fontFamily:MONO,letterSpacing:1,marginBottom:3}}>{s.date}</div><div style={{fontSize:12,color:C.text,lineHeight:1.5}}>{s.summary}</div></div>))}</>)}
     </div>
   )
 }
@@ -989,6 +954,7 @@ const INIT = {
 // â”€â”€â”€ MAIN APP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export default function Friday() {
   const [panel, setPanel] = useState(null) // which side panel is open
+  const [navExp, setNavExp] = useState(false)
   const [apiKey, setApiKey] = useState('')
   const [showSetup, setShowSetup] = useState(false)
   const [tempKey, setTempKey] = useState('')
@@ -1154,7 +1120,7 @@ export default function Friday() {
       setIsListening(false)
       const msgs={
         'no-speech':       null, // silent â€” user just didn't speak
-        'network':         'Voice recognition needs a network connection to Google\'s servers, sir.',
+        'network':         'Voice recognition is blocked, sir. In Brave, click the shield icon and lower fingerprinting protection — or try Chrome.',
         'not-allowed':     'Microphone access denied, sir. Allow it in your browser\'s address bar.',
         'audio-capture':   'No microphone found, sir.',
         'aborted':         null, // user cancelled â€” silent
@@ -1379,26 +1345,17 @@ STYLE: ${toneGuide} Under 80 words unless detail requested. No "Certainly!" ever
   const wk=weeklyKm(rides),streak=getStreak(rides),as=avgSpd(rides)
   const bal=transactions.reduce((s,t)=>t.type==='income'?s+t.amount:s-t.amount,0)
   const latestW=bodyMetrics.filter(m=>m.type==='weight').sort((a,b)=>b.date.localeCompare(a.date))[0]
-  const orbDist = panel ? 115 : 145
-
-  const badges=[
-    {label:'WEEKLY',value:wk,unit:'km',color:C.primary,angle:0,delay:0},
-    {label:'STREAK',value:streak,unit:'days',color:streak>=3?C.success:C.gold,angle:60,delay:0.5},
-    {label:'SPEED',value:as,unit:'kph',color:C.gold,angle:120,delay:1},
-    {label:'FORM',value:tsb,unit:'TSB',color:orbStatus.c,angle:180,delay:1.5},
-    {label:'WEIGHT',value:latestW?latestW.value:'â€”',unit:'kg',color:C.teal,angle:240,delay:2},
-    {label:'BALANCE',value:`â‚¬${Math.abs(bal)}`,unit:bal>=0?'pos':'neg',color:bal>=0?C.success:C.danger,angle:300,delay:2.5},
-  ]
-
-  const orbSize=panel?260:320
+  const orbSize=panel?280:360
+  const latestHRV=bodyMetrics.filter(m=>m.type==='hrv').sort((a,b)=>b.date.localeCompare(a.date))[0]
 
   const SUGGESTED=['Check my calendar for riding days','Log a ride for me','Generate my training plan','Analyse my improvements','How is my form this week?']
 
   const panelContent=()=>{
     if(!panel)return null
-    const title=NAV.find(n=>n.id===panel)?.tip?.toUpperCase()||panel.toUpperCase()
+    const title={cycling:'On the bicycle',training:'Training load',body:'The body',goals:'Goals',finance:'Of money',calendar:'Calendar',learning:'Learning',memory:'Memory',projects:'Projects',strava:'Strava'}[panel]||NAV.find(n=>n.id===panel)?.tip||panel
+    const eyebrow={cycling:'Cycling',training:'Training',body:'Body metrics',goals:'Goals',finance:'Finance',calendar:'Calendar',learning:'Learning',memory:'Memory',projects:'Projects',strava:'Strava'}[panel]||panel
     return(
-      <Panel title={title} onClose={()=>setPanel(null)}>
+      <Panel title={title} eyebrow={eyebrow} onClose={()=>setPanel(null)}>
         {panel==='cycling'&&<CyclingPanel rides={rides} setRides={setRides}/>}
         {panel==='training'&&<TrainingPanel rides={rides} trainingPlan={trainingPlan} setTrainingPlan={setTrainingPlan}/>}
         {panel==='body'&&<BodyPanel bodyMetrics={bodyMetrics} setBodyMetrics={setBodyMetrics} rides={rides}/>}
@@ -1419,45 +1376,59 @@ STYLE: ${toneGuide} Under 80 words unless detail requested. No "Certainly!" ever
         <title>Friday</title>
         <meta name="viewport" content="width=device-width,initial-scale=1"/>
         <link rel="manifest" href="/manifest.json"/>
-        <meta name="theme-color" content="#00d4ff"/>
+        <meta name="theme-color" content="oklch(0.155 0.008 60)"/>
         <link rel="preconnect" href="https://fonts.googleapis.com"/>
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous"/>
-        <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+        <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Inter+Tight:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"/>
       </Head>
 
       {/* Subtle grid background */}
-      <div style={{position:'fixed',inset:0,background:'#020c1b',backgroundImage:`linear-gradient(rgba(0,212,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,212,255,0.03) 1px,transparent 1px)`,backgroundSize:'60px 60px',pointerEvents:'none',zIndex:0}}/>
+      <div style={{position:'fixed',inset:0,background:'C.bg',backgroundImage:`linear-gradient(rgba(0,212,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,212,255,0.03) 1px,transparent 1px)`,backgroundSize:'60px 60px',pointerEvents:'none',zIndex:0}}/>
 
       <div style={{display:'flex',height:'100vh',overflow:'hidden',position:'relative',zIndex:1}}>
 
-        {/* â”€â”€ LEFT NAV â”€â”€ */}
-        <aside style={{width:56,minWidth:56,background:'rgba(4,16,30,0.9)',borderRight:`1px solid ${C.border}`,display:'flex',flexDirection:'column',alignItems:'center',padding:'16px 0',gap:4,zIndex:10}}>
-          {/* Logo */}
-          <div style={{fontFamily:'Orbitron,monospace',fontSize:13,color:C.primary,letterSpacing:2,marginBottom:12,fontWeight:700}}>F</div>
-
-          {NAV.map(n=>(
-            <button key={n.id} onClick={()=>setPanel(p=>p===n.id?null:n.id)} title={n.tip}
-              style={{width:38,height:38,borderRadius:8,border:`1px solid ${panel===n.id?C.primary:C.border}`,background:panel===n.id?`${C.primary}18`:'transparent',color:panel===n.id?C.primary:C.muted,fontSize:14,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',transition:'all 0.2s',flexShrink:0,
-                boxShadow:panel===n.id?`0 0 10px ${C.primary}40`:'none'}}
-              onMouseEnter={e=>{if(panel!==n.id){e.currentTarget.style.borderColor=`${C.primary}55`;e.currentTarget.style.color=C.text}}}
-              onMouseLeave={e=>{if(panel!==n.id){e.currentTarget.style.borderColor=C.border;e.currentTarget.style.color=C.muted}}}>
-              {n.icon}
-            </button>
-          ))}
-
-          <div style={{flex:1}}/>
-
-          {/* Tone & controls */}
-          <div style={{display:'flex',flexDirection:'column',gap:4,alignItems:'center'}}>
+        {/* ── LEFT NAV: hover-expand rail ── */}
+        <aside onMouseEnter={()=>setNavExp(true)} onMouseLeave={()=>setNavExp(false)}
+          style={{width:navExp?198:78,minWidth:navExp?198:78,height:'100%',background:C.surface,borderRight:`1px solid ${C.border}`,display:'flex',flexDirection:'column',alignItems:'stretch',padding:'22px 14px 18px',transition:'width 220ms cubic-bezier(.2,.7,.2,1),min-width 220ms cubic-bezier(.2,.7,.2,1)',overflow:'hidden',position:'relative',zIndex:10,flexShrink:0}}>
+          <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:28,padding:'0 4px',flexShrink:0}}>
+            <svg viewBox="0 0 28 28" width="28" height="28" style={{flexShrink:0}}>
+              <defs><linearGradient id="vp-logo" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor={C.primary}/><stop offset="100%" stopColor={C.success}/></linearGradient></defs>
+              <circle cx="14" cy="14" r="12" fill="none" stroke="url(#vp-logo)" strokeWidth="1.3"/>
+              <circle cx="14" cy="14" r="4" fill="url(#vp-logo)"/>
+            </svg>
+            <span style={{fontFamily:SERIF,fontSize:20,color:C.text,letterSpacing:'0.02em',whiteSpace:'nowrap',opacity:navExp?1:0,transition:'opacity 200ms',flexShrink:0}}>Friday</span>
+          </div>
+          <div style={{display:'flex',flexDirection:'column',gap:2,flex:1}}>
+            {NAV.map(n=>(
+              <button key={n.id} onClick={()=>setPanel(p=>p===n.id?null:n.id)} title={n.tip}
+                style={{height:40,border:0,background:'transparent',borderRadius:8,cursor:'pointer',color:panel===n.id?C.primary:C.muted,display:'flex',alignItems:'center',gap:14,padding:'0 12px',position:'relative',textAlign:'left',whiteSpace:'nowrap',fontFamily:SANS,fontSize:13,transition:'color 120ms',flexShrink:0}}>
+                {panel===n.id&&<span style={{position:'absolute',left:0,top:8,bottom:8,width:2,background:C.primary,borderRadius:1}}/>}
+                <NavIcon id={n.id}/>
+                <span style={{opacity:navExp?1:0,transition:'opacity 200ms'}}>{n.tip}</span>
+              </button>
+            ))}
+          </div>
+          <div style={{display:'flex',flexDirection:'column',gap:2}}>
             <button onClick={toggleWakeWord} title={wakeActive?'Wake word ON':'Wake word OFF'}
-              style={{width:38,height:38,borderRadius:8,border:`1px solid ${wakeActive?C.success:C.dim}`,background:wakeActive?`${C.success}15`:'transparent',color:wakeActive?C.success:C.muted,fontSize:14,cursor:'pointer',transition:'all 0.2s'}}>ðŸŽ™</button>
+              style={{height:40,border:0,background:'transparent',borderRadius:8,cursor:'pointer',color:wakeActive?C.primary:C.muted,display:'flex',alignItems:'center',gap:14,padding:'0 12px',fontFamily:SANS,fontSize:13,whiteSpace:'nowrap',transition:'color 120ms',flexShrink:0}}>
+              <NavIcon id="mic"/><span style={{opacity:navExp?1:0,transition:'opacity 200ms'}}>{wakeActive?'Wake: on':'Wake: off'}</span>
+            </button>
             <button onClick={handleExport} title="Export data"
-              style={{width:38,height:38,borderRadius:8,border:`1px solid ${C.dim}`,background:'transparent',color:C.muted,fontSize:12,cursor:'pointer',letterSpacing:0}} onMouseEnter={e=>e.target.style.color=C.text} onMouseLeave={e=>e.target.style.color=C.muted}>â†‘</button>
+              style={{height:40,border:0,background:'transparent',borderRadius:8,cursor:'pointer',color:C.muted,display:'flex',alignItems:'center',gap:14,padding:'0 12px',fontFamily:SANS,fontSize:13,whiteSpace:'nowrap',transition:'color 120ms',flexShrink:0}}>
+              <NavIcon id="export"/>
+              <span style={{opacity:navExp?1:0,transition:'opacity 200ms'}}>Export</span>
+            </button>
             <button onClick={()=>importRef.current?.click()} title="Import backup"
-              style={{width:38,height:38,borderRadius:8,border:`1px solid ${C.dim}`,background:'transparent',color:C.muted,fontSize:12,cursor:'pointer',letterSpacing:0}} onMouseEnter={e=>e.target.style.color=C.text} onMouseLeave={e=>e.target.style.color=C.muted}>â†“</button>
+              style={{height:40,border:0,background:'transparent',borderRadius:8,cursor:'pointer',color:C.muted,display:'flex',alignItems:'center',gap:14,padding:'0 12px',fontFamily:SANS,fontSize:13,whiteSpace:'nowrap',transition:'color 120ms',flexShrink:0}}>
+              <NavIcon id="import"/>
+              <span style={{opacity:navExp?1:0,transition:'opacity 200ms'}}>Import</span>
+            </button>
             <input ref={importRef} type="file" accept=".json" onChange={handleImport} style={{display:'none'}}/>
             <button onClick={()=>setShowSetup(true)} title="API Key"
-              style={{width:38,height:38,borderRadius:8,border:`1px solid ${C.dim}`,background:'transparent',color:C.muted,fontSize:12,cursor:'pointer'}} onMouseEnter={e=>e.target.style.color=C.text} onMouseLeave={e=>e.target.style.color=C.muted}>âš™</button>
+              style={{height:40,border:0,background:'transparent',borderRadius:8,cursor:'pointer',color:C.muted,display:'flex',alignItems:'center',gap:14,padding:'0 12px',fontFamily:SANS,fontSize:13,whiteSpace:'nowrap',transition:'color 120ms',flexShrink:0}}>
+              <NavIcon id="settings"/>
+              <span style={{opacity:navExp?1:0,transition:'opacity 200ms'}}>Settings</span>
+            </button>
           </div>
         </aside>
 
@@ -1466,74 +1437,66 @@ STYLE: ${toneGuide} Under 80 words unless detail requested. No "Certainly!" ever
           {/* Orb area */}
           <div style={{flex:1,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',position:'relative'}}>
 
-            {/* Data badges â€” container MUST be centered with translate(-50%,-50%) */}
-            <div style={{
-              position:'absolute',
-              left:'50%', top:'50%',
-              transform:'translate(-50%, -50%)',
-              width: orbSize + orbDist*2 + 100,
-              height: orbSize + orbDist*2 + 100,
-              pointerEvents:'none',
-              zIndex:3,
-            }}>
-              {badges.map((b,i)=>(
-                <DataBadge key={i} {...b} distance={orbSize/2 + orbDist} />
-              ))}
+            {/* OrbCaptions — top-left, top-right, bottom-left, bottom-right */}
+            <div style={{position:'absolute',inset:0,pointerEvents:'none',zIndex:3}}>
+              <OrbCaption label="Form" value={`${tsb>0?'+':''}${tsb} TSB`} style={{top:'18%',left:'4%',textAlign:'left'}}/>
+              <OrbCaption label="This week" value={`${wk} km`} style={{top:'18%',right:'4%',textAlign:'right'}}/>
+              <OrbCaption label="Resting heart" value={latestHRV?`${latestHRV.value} ms`:'— ms'} style={{bottom:'18%',left:'4%',textAlign:'left'}}/>
+              <OrbCaption label="Balance" value={`${bal>=0?'+':''}${(bal/1000).toFixed(1)} k€`} style={{bottom:'18%',right:'4%',textAlign:'right'}}/>
             </div>
 
             {/* Central orb */}
             <div style={{transition:'all 0.5s ease',zIndex:2}}>
-              <FridayOrb isSpeaking={isSpeaking} isLoading={isLoading} isListening={isListening} orbSize={orbSize} waveH={waveH}/>
+              <FridayOrb isSpeaking={isSpeaking} isLoading={isLoading} isListening={isListening} orbSize={orbSize}/>
             </div>
 
-            {/* Status line below orb */}
-            <div style={{marginTop:16,textAlign:'center',zIndex:2}}>
-              <div style={{fontFamily:'Orbitron,monospace',fontSize:9,color:C.muted,letterSpacing:3,marginBottom:4}}>
-                {isListening?'LISTENING â€” SPEAK NOW':isLoading?loadingLabel.toUpperCase():isSpeaking?'SPEAKING':wakeActive?'WAKE WORD ACTIVE':'AWAITING INPUT'}
+            {/* Status line */}
+            <div style={{marginTop:24,textAlign:'center',zIndex:2}}>
+              <div style={{fontFamily:MONO,fontSize:10,color:C.success,letterSpacing:'0.24em',textTransform:'uppercase',marginBottom:8}}>
+                {isListening?'Listening':'At your service'}
               </div>
-              <div style={{display:'flex',gap:6,justifyContent:'center'}}>
-                <span className="blink" style={{color:C.success,fontSize:8}}>â—</span>
-                <span style={{fontSize:10,color:C.muted}}>Friday v4 Â· Tools Â· Calendar Â· GPS Â· Memory</span>
-                {isSpeaking&&<button onClick={stopSpeaking} style={{background:'none',border:`1px solid ${C.muted}`,borderRadius:4,padding:'1px 7px',color:C.muted,cursor:'pointer',fontSize:9}}>â– </button>}
+              <div style={{fontFamily:SERIF,fontSize:17,color:C.muted,fontStyle:'italic',letterSpacing:'0.01em'}}>
+                {isListening?'Speak now, sir—listening.':isLoading?loadingLabel:isSpeaking?'Speaking…':wakeActive?'Wake word active, sir.':'Good '+tod()+', sir.'}
               </div>
+              {isSpeaking&&<button onClick={stopSpeaking} style={{marginTop:8,background:'none',border:`1px solid ${C.border}`,borderRadius:3,padding:'3px 10px',color:C.muted,cursor:'pointer',fontFamily:MONO,fontSize:10,letterSpacing:'0.1em'}}>stop</button>}
             </div>
 
             {/* Tone selector */}
-            <div style={{marginTop:12,display:'flex',gap:5,zIndex:2}}>
+            <div style={{marginTop:16,display:'flex',gap:6,zIndex:2}}>
               {['direct','balanced','encouraging'].map(t=>(
                 <button key={t} onClick={()=>{setTonePreference(t);localStorage.setItem('fri_tone',t)}}
-                  style={{padding:'3px 10px',borderRadius:4,border:`1px solid ${tonePreference===t?C.gold:C.dim}`,background:tonePreference===t?`${C.gold}12`:'transparent',color:tonePreference===t?C.gold:C.muted,fontSize:9,cursor:'pointer',fontFamily:'Orbitron,monospace',letterSpacing:1,textTransform:'uppercase'}}>{t}</button>
+                  style={{padding:'4px 12px',borderRadius:3,border:`1px solid ${tonePreference===t?C.primary:C.border}`,background:'transparent',color:tonePreference===t?C.primary:C.muted,fontFamily:MONO,fontSize:9,letterSpacing:'0.14em',textTransform:'uppercase',cursor:'pointer'}}>{t}</button>
               ))}
             </div>
-          </div>
 
+          </div>
           {/* Slide-in panel */}
           {panel && panelContent()}
         </main>
       </div>
 
       {/* â”€â”€ CHAT BAR â”€â”€ */}
-      <div style={{position:'fixed',bottom:0,left:56,right:0,zIndex:20,background:'rgba(2,12,27,0.97)',borderTop:`1px solid ${C.border}`,backdropFilter:'blur(12px)'}}>
+      <div style={{position:'fixed',bottom:0,left:78,right:0,zIndex:20,background:C.surface,borderTop:`1px solid ${C.border}`}}>
         {/* Messages (collapsed/expanded) */}
         {chatOpen&&displayMsgs.length>0&&(
           <div style={{maxHeight:260,overflowY:'auto',padding:'10px 16px 0',borderBottom:`1px solid ${C.border}`}}>
             {displayMsgs.map((m,i)=>{
               if(m.role==='action')return(
-                <div key={m.id||i} style={{margin:'2px 0 5px',padding:'4px 10px',borderRadius:5,background:`${C.gold}08`,border:`1px solid ${C.gold}18`,fontSize:11,color:C.gold,fontFamily:'JetBrains Mono,monospace'}}>{m.content}</div>
+                <div key={m.id||i} style={{margin:'2px 0 5px',padding:'4px 10px',borderRadius:5,background:`${C.gold}08`,border:`1px solid ${C.gold}18`,fontSize:11,color:C.gold,fontFamily:MONO}}>{m.content}</div>
               )
               if(m.role==='system')return(
                 <div key={m.id||i} style={{margin:'2px 0 5px',padding:'4px 10px',borderRadius:5,background:`${C.purple}08`,border:`1px solid ${C.purple}18`,fontSize:11,color:C.purple}}>âš™ {m.content}</div>
               )
               return(
                 <div key={m.id||i} style={{marginBottom:8,display:'flex',flexDirection:m.role==='user'?'row-reverse':'row',gap:6}}>
-                  {m.role==='assistant'&&<div style={{width:20,height:20,minWidth:20,borderRadius:'50%',background:`${C.primary}15`,border:`1px solid ${C.primary}33`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:7,color:C.primary,fontFamily:'Orbitron,monospace',flexShrink:0}}>F</div>}
+                  {m.role==='assistant'&&<div style={{width:20,height:20,minWidth:20,borderRadius:'50%',background:`${C.primary}15`,border:`1px solid ${C.primary}33`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:7,color:C.primary,fontFamily:MONO,flexShrink:0}}>F</div>}
                   <div style={{maxWidth:'75%',padding:'7px 10px',borderRadius:8,fontSize:13,lineHeight:1.6,background:m.role==='user'?`${C.primary}10`:C.card,border:`1px solid ${m.role==='user'?C.border:C.dim}`,color:m.role==='user'?C.primary:C.text}}>{m.content}</div>
                 </div>
               )
             })}
             {isLoading&&(
               <div style={{display:'flex',gap:6,marginBottom:8}}>
-                <div style={{width:20,height:20,borderRadius:'50%',background:`${C.primary}15`,border:`1px solid ${C.primary}33`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:7,color:C.primary,fontFamily:'Orbitron,monospace'}}>F</div>
+                <div style={{width:20,height:20,borderRadius:'50%',background:`${C.primary}15`,border:`1px solid ${C.primary}33`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:7,color:C.primary,fontFamily:MONO}}>F</div>
                 <div style={{padding:'7px 10px',background:C.card,border:`1px solid ${C.dim}`,borderRadius:8}}>
                   <span className="blink" style={{color:C.muted,fontSize:12}}>â—Œ {loadingLabel}</span>
                 </div>
@@ -1548,9 +1511,8 @@ STYLE: ${toneGuide} Under 80 words unless detail requested. No "Certainly!" ever
           <div style={{padding:'8px 16px',display:'flex',gap:8,overflowX:'auto'}}>
             {SUGGESTED.map(p=>(
               <button key={p} onClick={()=>{setChatInput(p);setChatOpen(true)}}
-                style={{whiteSpace:'nowrap',padding:'5px 12px',borderRadius:5,border:`1px solid ${C.dim}`,background:'transparent',color:C.muted,fontSize:11,cursor:'pointer',flexShrink:0,transition:'all 0.15s'}}
-                onMouseEnter={e=>{e.currentTarget.style.color=C.text;e.currentTarget.style.borderColor=C.border}}
-                onMouseLeave={e=>{e.currentTarget.style.color=C.muted;e.currentTarget.style.borderColor=C.dim}}>
+                style={{whiteSpace:'nowrap',padding:'6px 14px',borderRadius:100,border:`1px solid ${C.border}`,background:'transparent',color:C.muted,fontFamily:SANS,fontStyle:'italic',fontSize:12,cursor:'pointer',flexShrink:0}}
+                >
                 {p}</button>
             ))}
           </div>
@@ -1560,7 +1522,7 @@ STYLE: ${toneGuide} Under 80 words unless detail requested. No "Certainly!" ever
         {isListening&&(
           <div style={{padding:'6px 14px',background:`${C.danger}12`,borderTop:`1px solid ${C.danger}33`,display:'flex',alignItems:'center',gap:8}}>
             <span className="blink" style={{color:C.danger,fontSize:10}}>â—</span>
-            <span style={{fontSize:11,color:C.danger,fontFamily:'Orbitron,monospace',letterSpacing:2}}>LISTENING â€” SPEAK NOW</span>
+            <span style={{fontSize:11,color:C.danger,fontFamily:MONO,letterSpacing:2}}>LISTENING â€” SPEAK NOW</span>
             <span style={{fontSize:11,color:C.muted,marginLeft:4}}>Friday will respond automatically when you stop speaking</span>
             <button onClick={()=>{recognitionRef.current?.abort();setIsListening(false)}}
               style={{marginLeft:'auto',background:'none',border:`1px solid ${C.danger}55`,borderRadius:4,padding:'2px 8px',color:C.danger,cursor:'pointer',fontSize:10}}>Cancel</button>
@@ -1570,7 +1532,7 @@ STYLE: ${toneGuide} Under 80 words unless detail requested. No "Certainly!" ever
         {/* Input row */}
         <div style={{padding:'8px 12px',display:'flex',gap:7,alignItems:'center'}}>
           <button onClick={()=>setChatOpen(o=>!o)}
-            style={{width:32,height:32,borderRadius:6,flexShrink:0,border:`1px solid ${chatOpen?C.primary:C.dim}`,background:chatOpen?`${C.primary}12`:'transparent',color:chatOpen?C.primary:C.muted,fontSize:11,cursor:'pointer',fontFamily:'Orbitron,monospace',transition:'all 0.2s'}}>
+            style={{width:32,height:32,borderRadius:6,flexShrink:0,border:`1px solid ${chatOpen?C.primary:C.dim}`,background:chatOpen?`${C.primary}12`:'transparent',color:chatOpen?C.primary:C.muted,fontSize:11,cursor:'pointer',fontFamily:MONO,transition:'all 0.2s'}}>
             {chatOpen?'â–¼':'â–²'}
           </button>
 
@@ -1590,7 +1552,7 @@ STYLE: ${toneGuide} Under 80 words unless detail requested. No "Certainly!" ever
 
           <textarea id="fri-input" value={chatInput} onChange={e=>setChatInput(e.target.value)} onKeyDown={onKD}
             placeholder={isListening?'Listening... speak now':'Type or click ðŸŽ™ to speak (Chrome/Edge only)'}
-            rows={1} style={{flex:1,background:'transparent',border:`1px solid ${isListening?C.danger:C.border}`,borderRadius:6,padding:'6px 10px',color:C.text,fontSize:13,outline:'none',resize:'none',fontFamily:'Rajdhani,sans-serif',lineHeight:1.5,maxHeight:60,transition:'border-color 0.2s'}}
+            rows={1} style={{flex:1,background:'transparent',border:`1px solid ${isListening?C.danger:C.border}`,borderRadius:3,padding:'8px 12px',color:C.text,fontSize:17,outline:'none',resize:'none',fontFamily:SERIF,fontStyle:'italic',lineHeight:1.5,maxHeight:80,transition:'border-color 0.2s'}}
             onFocus={e=>{e.target.style.borderColor=C.primary;setChatOpen(true)}} onBlur={e=>{if(!isListening)e.target.style.borderColor=C.border}}/>
 
           <button onClick={sendMessage}
@@ -1603,13 +1565,13 @@ STYLE: ${toneGuide} Under 80 words unless detail requested. No "Certainly!" ever
       {showSetup&&(
         <div style={{position:'fixed',inset:0,background:'rgba(2,12,27,0.95)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:100,backdropFilter:'blur(12px)'}}>
           <div style={{background:C.card,border:`1px solid ${C.primary}`,borderRadius:14,padding:36,maxWidth:440,width:'90%',boxShadow:`0 0 80px ${C.glow}`}}>
-            <div style={{fontFamily:'Orbitron,monospace',fontSize:17,color:C.primary,marginBottom:6,letterSpacing:2}}>FRIDAY v4</div>
+            <div style={{fontFamily:SERIF+',serif',fontSize:28,color:C.text,marginBottom:6,lineHeight:1}}>FRIDAY v4</div>
             <p style={{color:C.muted,fontSize:13,lineHeight:1.7,marginBottom:16}}>Enter your Anthropic API key to activate Friday. Stored locally â€” sent only to Anthropic and your connected Google Calendar.</p>
             <div style={{marginBottom:14}}>
               <Label>Anthropic API Key</Label>
-              <Inp type="password" value={tempKey} onChange={e=>setTempKey(e.target.value)} placeholder="sk-ant-..." style={{fontFamily:'JetBrains Mono,monospace'}}/>
+              <Inp type="password" value={tempKey} onChange={e=>setTempKey(e.target.value)} placeholder="sk-ant-..." style={{fontFamily:MONO}}/>
             </div>
-            <p style={{fontSize:10,color:C.muted,marginBottom:18}}>Get yours at <a href="https://console.anthropic.com" target="_blank" rel="noopener noreferrer" style={{color:C.primary}}>console.anthropic.com</a> Â· Claude Sonnet 4</p>
+            <p style={{fontFamily:MONO+',monospace',fontSize:9,letterSpacing:'0.22em',textTransform:'uppercase',color:C.dim,marginBottom:18}}>Get yours at <a href="https://console.anthropic.com" target="_blank" rel="noopener noreferrer" style={{color:C.primary}}>console.anthropic.com</a> Â· Claude Sonnet 4</p>
             <div style={{display:'flex',gap:8}}>
               <Btn onClick={saveKey} color={C.primary} style={{flex:1,padding:'11px',fontSize:13}}>ACTIVATE</Btn>
               {apiKey&&<Btn onClick={()=>setShowSetup(false)} color={C.muted} outline style={{padding:'11px 16px'}}>Cancel</Btn>}
@@ -1620,4 +1582,12 @@ STYLE: ${toneGuide} Under 80 words unless detail requested. No "Certainly!" ever
     </>
   )
 }
+
+
+
+
+
+
+
+
 
