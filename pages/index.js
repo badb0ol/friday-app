@@ -1441,7 +1441,7 @@ STYLE: ${toneGuide} Under 80 words unless detail requested. No "Certainly!" ever
   const wk=weeklyKm(rides),streak=getStreak(rides),as=avgSpd(rides)
   const bal=transactions.reduce((s,t)=>t.type==='income'?s+t.amount:s-t.amount,0)
   const latestW=bodyMetrics.filter(m=>m.type==='weight').sort((a,b)=>b.date.localeCompare(a.date))[0]
-  const orbSize=panel?280:360
+  const orbSize=280
   const latestHRV=bodyMetrics.filter(m=>m.type==='hrv').sort((a,b)=>b.date.localeCompare(a.date))[0]
 
   const SUGGESTED=['Check my calendar for riding days','Log a ride for me','Generate my training plan','Analyse my improvements','How is my form this week?']
@@ -1566,13 +1566,24 @@ STYLE: ${toneGuide} Under 80 words unless detail requested. No "Certainly!" ever
             </div>
 
           </div>
-          {/* Slide-in panel */}
-          {panel && panelContent()}
+          {/* Slide-in panel or always-visible Home overview */}
+          {panel
+            ? panelContent()
+            : <div style={{width:490,minWidth:490,height:'100%',background:C.surface,borderLeft:`1px solid ${C.border}`,display:'flex',flexDirection:'column',overflow:'hidden'}}>
+                <div style={{padding:'32px 36px 22px',flexShrink:0}}>
+                  <div style={{fontFamily:MONO,fontSize:10,color:C.success,letterSpacing:'0.22em',textTransform:'uppercase',marginBottom:12}}>Overview</div>
+                  <div style={{fontFamily:SERIF,fontSize:36,color:C.text,lineHeight:1,letterSpacing:'-0.015em'}}>A morning briefing</div>
+                </div>
+                <div style={{flex:1,overflowY:'auto',padding:'4px 36px 32px'}}>
+                  <OverviewPanel rides={rides} goals={goals} transactions={transactions} bodyMetrics={bodyMetrics}/>
+                </div>
+              </div>
+          }
         </main>
       </div>
 
       {/* â”€â”€ CHAT BAR â”€â”€ */}
-      <div style={{position:'fixed',bottom:0,left:78,right:0,zIndex:20,background:C.surface,borderTop:`1px solid ${C.border}`}}>
+      <div style={{position:'fixed',bottom:0,left:navExp?198:78,right:0,zIndex:20,background:C.surface,borderTop:`1px solid ${C.border}`,transition:'left 220ms cubic-bezier(.2,.7,.2,1)'}}>
         {/* Messages (collapsed/expanded) */}
         {chatOpen&&displayMsgs.length>0&&(
           <div style={{maxHeight:260,overflowY:'auto',padding:'10px 16px 0',borderBottom:`1px solid ${C.border}`}}>
@@ -1594,7 +1605,7 @@ STYLE: ${toneGuide} Under 80 words unless detail requested. No "Certainly!" ever
               <div style={{display:'flex',gap:6,marginBottom:8}}>
                 <div style={{width:20,height:20,borderRadius:'50%',background:`${C.primary}15`,border:`1px solid ${C.primary}33`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:7,color:C.primary,fontFamily:MONO}}>F</div>
                 <div style={{padding:'7px 10px',background:C.card,border:`1px solid ${C.dim}`,borderRadius:8}}>
-                  <span className="blink" style={{color:C.muted,fontSize:12}}>â—Œ {loadingLabel}</span>
+                  <span className="blink" style={{color:C.muted,fontSize:12}}>{loadingLabel}</span>
                 </div>
               </div>
             )}
@@ -1618,7 +1629,7 @@ STYLE: ${toneGuide} Under 80 words unless detail requested. No "Certainly!" ever
         {isListening&&(
           <div style={{padding:'6px 14px',background:`${C.danger}12`,borderTop:`1px solid ${C.danger}33`,display:'flex',alignItems:'center',gap:8}}>
             <span className="blink" style={{color:C.danger,fontSize:10}}>â—</span>
-            <span style={{fontSize:11,color:C.danger,fontFamily:MONO,letterSpacing:2}}>LISTENING â€” SPEAK NOW</span>
+            <span style={{fontSize:11,color:C.danger,fontFamily:MONO,letterSpacing:2}}>LISTENING — SPEAK NOW</span>
             <span style={{fontSize:11,color:C.muted,marginLeft:4}}>Friday will respond automatically when you stop speaking</span>
             <button onClick={()=>{recognitionRef.current?.abort();setIsListening(false)}}
               style={{marginLeft:'auto',background:'none',border:`1px solid ${C.danger}55`,borderRadius:4,padding:'2px 8px',color:C.danger,cursor:'pointer',fontSize:10}}>Cancel</button>
@@ -1629,7 +1640,7 @@ STYLE: ${toneGuide} Under 80 words unless detail requested. No "Certainly!" ever
         <div style={{padding:'8px 12px',display:'flex',gap:7,alignItems:'center'}}>
           <button onClick={()=>setChatOpen(o=>!o)}
             style={{width:32,height:32,borderRadius:6,flexShrink:0,border:`1px solid ${chatOpen?C.primary:C.dim}`,background:chatOpen?`${C.primary}12`:'transparent',color:chatOpen?C.primary:C.muted,fontSize:11,cursor:'pointer',fontFamily:MONO,transition:'all 0.2s'}}>
-            {chatOpen?'â–¼':'â–²'}
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">{chatOpen?<path d="M2 3.5 6 8.5 10 3.5"/>:<path d="M2 8.5 6 3.5 10 8.5"/>}</svg>
           </button>
 
           {/* Mic button â€” clearly shows state, auto-sends on recognition */}
@@ -1643,17 +1654,17 @@ STYLE: ${toneGuide} Under 80 words unless detail requested. No "Certainly!" ever
               transition:'all 0.2s',
               boxShadow:isListening?`0 0 14px ${C.danger}66`:'none',
               animation:isListening?'pulse-glow 0.8s ease-in-out infinite':'none'}}>
-            ðŸŽ™
+            <NavIcon id="mic" size={16}/>
           </button>
 
           <textarea id="fri-input" value={chatInput} onChange={e=>setChatInput(e.target.value)} onKeyDown={onKD}
-            placeholder={isListening?'Listening... speak now':'Type or click ðŸŽ™ to speak (Chrome/Edge only)'}
+            placeholder={isListening?'Listening... speak now':'Ask Friday anything — voice in Chrome/Edge'}
             rows={1} style={{flex:1,background:'transparent',border:`1px solid ${isListening?C.danger:C.border}`,borderRadius:3,padding:'8px 12px',color:C.text,fontSize:17,outline:'none',resize:'none',fontFamily:SERIF,fontStyle:'italic',lineHeight:1.5,maxHeight:80,transition:'border-color 0.2s'}}
             onFocus={e=>{e.target.style.borderColor=C.primary;setChatOpen(true)}} onBlur={e=>{if(!isListening)e.target.style.borderColor=C.border}}/>
 
           <button onClick={sendMessage}
             style={{width:32,height:32,borderRadius:6,flexShrink:0,border:`1px solid ${C.primary}`,background:`${C.primary}12`,color:C.primary,fontSize:13,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',transition:'all 0.2s'}}
-            onMouseEnter={e=>e.currentTarget.style.background=`${C.primary}25`} onMouseLeave={e=>e.currentTarget.style.background=`${C.primary}12`}>â–¶</button>
+            onMouseEnter={e=>e.currentTarget.style.background=`${C.primary}25`} onMouseLeave={e=>e.currentTarget.style.background=`${C.primary}12`}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
         </div>
       </div>
 
