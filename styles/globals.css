@@ -1,0 +1,29 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0 }
+html, body { height: 100%; background: #020c1b; color: #b8d4ee; font-family: 'Rajdhani', sans-serif; overflow: hidden }
+button { font-family: inherit }
+input, select, textarea { font-family: inherit; box-sizing: border-box }
+input[type=number]::-webkit-inner-spin-button { opacity: 0.4 }
+select option { background: #091828 }
+
+@keyframes ring-cw   { from { transform: rotate(0deg)   } to { transform: rotate(360deg)  } }
+@keyframes ring-ccw  { from { transform: rotate(0deg)   } to { transform: rotate(-360deg) } }
+@keyframes orb-idle  { 0%,100% { filter: drop-shadow(0 0 22px rgba(0,212,255,0.35)); } 50% { filter: drop-shadow(0 0 55px rgba(0,212,255,0.65)); } }
+@keyframes orb-think { 0%,100% { filter: drop-shadow(0 0 30px rgba(255,183,0,0.5));  } 50% { filter: drop-shadow(0 0 70px rgba(255,183,0,0.8));  } }
+@keyframes orb-speak { 0%,100% { filter: drop-shadow(0 0 40px rgba(0,229,160,0.6));  } 50% { filter: drop-shadow(0 0 90px rgba(0,229,160,1.0));  } }
+@keyframes badge-float { 0%,100% { transform: translateY(0px) } 50% { transform: translateY(-5px) } }
+@keyframes panel-in  { from { opacity:0; transform: translateX(24px) } to { opacity:1; transform: translateX(0) } }
+@keyframes fade-in   { from { opacity:0; transform: translateY(8px)  } to { opacity:1; transform: translateY(0) } }
+@keyframes blink     { 0%,100% { opacity:1 } 50% { opacity:0.2 } }
+@keyframes pulse-glow { 0%,100% { box-shadow: 0 0 6px rgba(0,212,255,0.6) } 50% { box-shadow: 0 0 20px rgba(0,212,255,1) } }
+@keyframes scan-fast { from { transform: rotate(0deg) } to { transform: rotate(360deg) } }
+
+.fade-in    { animation: fade-in 0.4s ease both }
+.panel-in   { animation: panel-in 0.3s ease both }
+.blink      { animation: blink 1.4s ease-in-out infinite }
+
+::-webkit-scrollbar { width: 4px }
+::-webkit-scrollbar-track { background: transparent }
+::-webkit-scrollbar-thumb { background: rgba(0,212,255,0.2); border-radius: 2px }
+
+.progress-track { background: rgba(0,212,255,0.08); border-radius: 99px; overflow: hidden }
+.progress-fill  { height: 100%; border-radius: 99px; transition: width 0.6s ease }
